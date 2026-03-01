@@ -1,6 +1,6 @@
 <?php
 error_reporting(E_ALL);
-ini_set('display_errors', '1');
+ini_set('display_errors', '0');
 ini_set('display_startup_errors', '1');
 
 class MIE_EhrungRepository {
@@ -28,15 +28,6 @@ class MIE_EhrungRepository {
             $where[] = "mi_id = :mi_id";
             $params[':mi_id'] = (int)$search;
         }
-        
-        // If you want to add text search on other columns, extend here
-        // Example (uncomment and adjust column name):
-        /*
-         if ($search !== null && trim($search) !== '' && !is_numeric($search)) {
-         $where[] = "me_ehrung LIKE :search";
-         $params[':search'] = '%' . $search . '%';
-         }
-         */
         
         if (count($where) > 0) {
             $sql .= " WHERE " . implode(' AND ', $where);
@@ -70,9 +61,10 @@ class MIE_EhrungRepository {
      * @return bool
      */
     protected function modifyRow(array &$row, string $tabTyp): bool {
+        /*
         $json = json_encode($row);
         self::log("modifyRow called, row: $json");
-        
+        */
         $me_id = $row['me_id'] ?? 0;
         $row['action'] = "<a href='VS_M_EH_Edit.php?ID={$me_id}'>Edit</a>";
         

@@ -17,6 +17,7 @@ class MI_MitgliederModule
     private const TABLE_MITGLIEDER = 'mitglieder';
     private const TABLE_MI_BEZ = 'mi_bez';
     private const TABLE_MI_EHRUNG = 'mi_ehrung';
+    private const TABLE_MI_ANMELD = 'mi_anmeld';
     
     public function __construct(FS_Database $db)
     {
@@ -104,6 +105,14 @@ class MI_MitgliederModule
     {
         return $this->db->select(self::TABLE_MI_EHRUNG, $where, ['*'], $orderBy, $limit, $offset);
     }
+    
+    //  --- Mitgliedder- Neu- Anmeldung  (fv_mi_anmeld) ---
+    
+    public function createMiAnmeld(array $data): int
+    {
+        return $this->db->insert(self::TABLE_MI_ANMELD, $data);
+    }
+    
 }
 
 /**

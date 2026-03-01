@@ -9,7 +9,7 @@ $debug = false;
  * Zur Benutzung der neuen, gemeinsamen Bibliotheken
  * die neuen Bibs
  */
-require_once $path2ROOT . 'login/common/BS_Funcs.lib.php'; // Diverse Unterprogramme
+require_once $path2ROOT . 'login/common/BS_Funcs_lib.php'; // Diverse Unterprogramme
 require_once $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
 
 require_once 'FS_Benutzer_CLS.php';

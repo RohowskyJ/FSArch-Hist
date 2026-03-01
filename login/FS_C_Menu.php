@@ -26,7 +26,7 @@ $path2ROOT = "../";
 $debug = False; // Debug output Ein/Aus Schalter
 
 require $path2ROOT .  'login/common/VF_Comm_Funcs.lib.php';
-require $path2ROOT .  'login/common/BS_Funcs.lib.php';
+require $path2ROOT .  'login/common/BS_Funcs_lib.php';
 # require $path2ROOT .  'login/common/BA_Edit_Funcs.lib.php';
 # require $path2ROOT .  'login/common/BS_FormsFlex_CLS.php';
 # require $path2ROOT .  'login/common/BS_TabSpalt_CLS.php';
@@ -104,7 +104,7 @@ initial_debug('POST', 'GET'); # Wenn $debug=true - Ausgabe von Debug Information
         echo "</div>"; // Ende der Ausgabe- Einheit Feld
 
     echo "<div class='Menu-Separator'>"; // Beginn der Einheit Ausgabe
-    echo " &nbsp &nbsp &nbsp  &nbsp &nbsp &nbsp <a href='../'>LOGOFF (HomePage)</a>";
+    echo " &nbsp &nbsp &nbsp  &nbsp &nbsp &nbsp <a href='/VFH'>LOGOFF (HomePage)</a>";
     echo "</div>"; // Ende der Inhalt Spalte
     
 

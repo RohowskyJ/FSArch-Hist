@@ -1,6 +1,6 @@
 <?php
 // Fehleranzeige und Logging aktivieren (nur für Debug, im Produktivbetrieb aus)
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 ini_set('log_errors', 1);
@@ -21,12 +21,10 @@ register_shutdown_function(function() {
 ob_start();
 
 $rootPfad = $_SERVER['DOCUMENT_ROOT'];
-require_once $rootPfad . '/FHArch_Neu/login/BS_BootPfadL_CLS.php';
-
-// Jetzt PathHelper initialisieren
-PathHelper::init('/FHArch_Neu');
-
-// Autoloader registrieren (benötigt initialisierten PathHelper)
+$caller = $_SERVER['REQUEST_URI'];
+$cal_arr = explode("/",$caller);
+require_once $rootPfad . '/'.$cal_arr[1].'/login/BS_BootPfadL_CLS.php';
+PathHelper::init('/'.$cal_arr[1]);  // Basis-URL anpassen
 AppAutoloader::register();
 
 // Optional: prüfen, ob PathHelper geladen ist
