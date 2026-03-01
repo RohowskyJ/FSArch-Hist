@@ -11,8 +11,10 @@ javscript/tabulator*
 javascript/flickr*
 css/w3*
 css/tabulator*
-css/flickr*
+css/flatpickr*
+css/pure*
 imgs
+config_*.def
 config_*.ini
 FS_Config_*
 FS_Config.*
@@ -22,3 +24,4 @@ jq*
 neues/*
 test/*
 /VF_Upload
+vendor/*
