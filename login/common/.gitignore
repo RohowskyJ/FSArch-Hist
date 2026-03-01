@@ -9,6 +9,9 @@ javascript/jqwidgets
 javascript/bootstrap
 javscript/tabulator*
 javascript/flickr*
+css/w3*
+css/tabulator*
+css/flickr*
 imgs
 config_*.ini
 FS_Config_*
