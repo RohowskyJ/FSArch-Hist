@@ -7,10 +7,11 @@ PdfToText-master
 multifile-master
 javascript/jqwidgets
 javascript/bootstrap
+tabulator*/
+vendor/
 imgs
 config_*.ini
 FS_Config_*
-FS_Config.*
 Fonts
 bo*
 jq*
