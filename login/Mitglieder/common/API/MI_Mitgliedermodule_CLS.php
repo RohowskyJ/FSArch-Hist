@@ -52,6 +52,13 @@ class MI_MitgliederModule
         return $this->db->select(self::TABLE_MITGLIEDER, $where, ['*'], $orderBy, $limit, $offset);
     }
     
+    /** ist E-Mail  Adresse schon Vorhanden ? */
+    public function emailExists(string $email): bool
+    {
+        $result = $this->db->select(self::TABLE_MITGLIEDER, ['mi_email' => $email], ['mi_id']);
+        return !empty($result);
+    }
+    
     // --- Mitglieder-Beiträge (fv_mi_bez) ---
     
     public function createMiBez(array $data): int
@@ -108,10 +115,16 @@ class MI_MitgliederModule
     
     //  --- Mitgliedder- Neu- Anmeldung  (fv_mi_anmeld) ---
     
-    public function createMiAnmeld(array $data): int
+    public function createMiAnmeldg(array $data): int
     {
         return $this->db->insert(self::TABLE_MI_ANMELD, $data);
     }
+    
+    public function getMiAnmeldgById(int $id): ?array
+    {
+        return $this->db->selectOne(self::TABLE_MI_EHRUNG, ['me_id' => $id]);
+    }
+    
     
 }
 
