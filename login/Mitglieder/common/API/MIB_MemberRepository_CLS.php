@@ -88,7 +88,7 @@ class MIB_MemberRepository {
             foreach ($miBez_arr as $rbez) {
                 
                 $json = json_encode($rbez);
-                $this->log(__LINE__ . " bez_Daten, row $json");
+                // $this->log(__LINE__ . " bez_Daten, row $json");
                 
                 if ($rbez['mb_bez_mb_bis'] == $lJahr) {
                     $row['M_1'] = $rbez['mb_bez_mb_bis'];
@@ -133,8 +133,8 @@ class MIB_MemberRepository {
      */
     protected function modifyRow(array &$row, $tabTyp)
     {
-        $json = json_encode($row);
-        $this->log("modifyRow wurde aufgerufen, row $json");
+        // $json = json_encode($row);
+        // $this->log("modifyRow wurde aufgerufen, row $json");
         
         $mi_id = $row['mi_id'] ?? 0;
        

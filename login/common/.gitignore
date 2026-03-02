@@ -7,9 +7,19 @@ PdfToText-master
 multifile-master
 javascript/jqwidgets
 javascript/bootstrap
+
+javscript/tabulator*
+javascript/flickr*
+css/w3*
+css/tabulator*
+css/flatpickr*
+css/pure*
+
 tabulator*/
-vendor/
+vendor/*
+
 imgs
+config_*.def
 config_*.ini
 FS_Config_*
 Fonts
@@ -18,3 +28,4 @@ jq*
 neues/*
 test/*
 /VF_Upload
+

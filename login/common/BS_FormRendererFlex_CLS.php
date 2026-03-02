@@ -332,7 +332,7 @@ final class BS_FormRendererFlex
         array $options,
         string $infoText = '',
         string $fieldAttr = '',
-        string $redOnly = '',
+        string $readOnly = '',
         string $labelOverride = ''
         ): string {
             $valueCurrent = (string)($this->data[$fieldName] ?? '');
@@ -348,7 +348,7 @@ final class BS_FormRendererFlex
                 $control = "<div class='readonly-block'>".$this->esc((string)$shown)."</div>";
             } else {
                 $control = "<select class='{$class}' id='{$this->esc($fieldName)}' name='{$this->esc($fieldName)}'
-                        {$fieldAttr} {$readonly} {$disabled}>";
+                        {$fieldAttr} {$readOnly} {$disabled}>";
                         foreach ($options as $val => $text) {
                             $selected = ((string)$val === $valueCurrent) ? 'selected' : '';
                             $control .= "<option value='".$this->esc((string)$val)."' {$selected}>".$this->esc((string)$text)."</option>";

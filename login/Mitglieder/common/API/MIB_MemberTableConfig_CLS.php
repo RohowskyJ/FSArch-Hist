@@ -19,7 +19,7 @@ class MIB_MemberTableConfig {
     private static string $logFile = "MIB_TableConfig_debug.log.txt";
     
     public static function getColumns(string $listType, PDO $pdo): array {
-  
+        /*
         $json = json_encode($pdo);
         self::log(__LINE__ . " listType $listType");
         self::log(__LINE__ . " PDO $json");
@@ -28,7 +28,7 @@ class MIB_MemberTableConfig {
         
         $json = json_encode($pdo);
         self::log(__LINE__ . " PDO $json");
-
+        */
         $sortNo = []; // nicht zu sortierende Spalten
         $hideNo = []; // nicht versteckbare Spalten
         $editable = []; // editierbare Spalten
@@ -81,10 +81,10 @@ class MIB_MemberTableConfig {
         $colStyles  = $meta->getStylesMap();
         $colTypes = $meta->getTypesMap();
         $colLength = $meta->getMaxLengthsMap();
-       
+       /*
         $json = json_encode($colComment);
         self::log( __LINE__ . " Kommentare $json  ");
-        
+        */
         # $TabTitles[] = ["title" => "Aktion", "field" => "action", "width" =>  6 , "hozAlign" => "center",  "headerSort" => false ,  "formatter" => "html"];
         foreach ($showCols as $fldName ) { 
            $titel = "";
@@ -210,9 +210,10 @@ class MIB_MemberTableConfig {
             }
 
         }
+        /*
         $json = json_encode($TabTitles);
         self::log("Tabtitles $json");
-        
+        */
         return $TabTitles;
     }
     

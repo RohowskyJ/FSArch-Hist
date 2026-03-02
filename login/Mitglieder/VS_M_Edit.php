@@ -10,9 +10,7 @@ session_start();
 $module = 'MVW';
 $sub_mod = 'all';
 
-$tabelle = 'fv_mitglieder';
-
-const Prefix = '';
+# $tabelle = 'fv_mitglieder';
 
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
@@ -20,9 +18,12 @@ ini_set('log_errors', '1');
 ini_set('error_log', __DIR__ . '/bootstrap_php-error.log.txt');
 
 $rootPfad = $_SERVER['DOCUMENT_ROOT'];
-require_once $rootPfad . '/FHArch_Neu/login/BS_BootPfadL_CLS.php';
+$caller = $_SERVER['REQUEST_URI'];
+$cal_arr = explode("/",$caller);
+# var_dump($cal_arr);
+require_once $rootPfad . '/'.$cal_arr[1].'/login/BS_BootPfadL_CLS.php';
 
-PathHelper::init('/FHArch_Neu');  // Basis-URL anpassen
+PathHelper::init('/'.$cal_arr[1]);  // Basis-URL anpassen
 AppAutoloader::register();
 
 /**
@@ -34,7 +35,7 @@ $path2ROOT = "../../";
 
 $debug = False; // Debug output Ein/Aus Schalter
 
-require $path2ROOT . 'login/common/BS_Funcs.lib.php';
+require $path2ROOT . 'login/common/BS_Funcs_lib.php';
 
 require $path2ROOT . 'login/common/FS_CommFuncs_lib.php';
 
