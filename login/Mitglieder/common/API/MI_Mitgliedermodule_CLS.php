@@ -125,7 +125,7 @@ class MI_MitgliederModule
         return $this->db->selectOne(self::TABLE_MI_EHRUNG, ['me_id' => $id]);
     }
     
-    
+
 }
 
 /**

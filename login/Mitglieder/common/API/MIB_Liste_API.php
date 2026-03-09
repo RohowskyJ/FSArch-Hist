@@ -32,8 +32,7 @@ if (!class_exists('PathHelper')) {
     error_log("Class PathHelper not found after require_once!");
 } else {
     error_log("Class PathHelper loaded successfully.");
-}
-error_log(__LINE__); 
+} 
 
 header('Content-Type: application/json; charset=utf-8');
 

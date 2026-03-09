@@ -12,11 +12,12 @@ if ($debug) {
 
 $editProtect = false;  // mit true: keine Eingabe möglich für die ganze Seite
 $readonly = "";
-
+/* nicht für dieses Script, muss von extern editieren konnen 
 if (isset($_SESSION['BS_Prim']['Mod']) && $_SESSION['BS_Prim']['Mod']['smod'] != 'IntStart' ) {
     # $editProtect = true;
     # $readonly = false;
 }
+*/
 $forms = new BS_FormRendererFlex($meta, $phase,  $neu, [], $editProtect, $module );
 
 $ed_lcnt = 0;

@@ -10,15 +10,16 @@
  *
  *  HTML_header      - Ausgabe des Seiten- Headers, Laden der Seitenparameter aud config_s.ini
  *  HTML_trailer     - Ausgabe Seitenende
- *  Link_DB          - DB verbinden
  *  flow_add         - Function- call log in login/flow  mit Datum gespeichert
  *  initial_debug    - Debug Anzeige mit Auswahl nach Parameter
- *  SQL_QUERY        - DFunction  für mysql_query mit Fehler anzeige 
  *  table_exists     - Feststelle, welche Tabellen mit Prefix existiert
  *  console_log      - Schreiben eines eintrags im Browser- concole.log 
  *  erlaubnis        - gibt - die entsprechende Erlaubnis zurück, abhängig von Rolle bzw Module
  *  userHasRole      -  true : Berechtigt, false nicht Berechtigt
  *  convertInternationalDateToSql Konvertiert Internationale Datenformate nach sql- Datums- Format Y-m-d
+ *  writelog     - zum Schreiben von Eintragungen in LOG Files
+ *  logandMail   - zum Schreiben von Eintragungen in LOG Files und versenden einer Mail an die Admins
+ *  
  */
 
 if ($debug) {
@@ -473,73 +474,6 @@ console.log('button clicked ' );
 } // Ende von function HTML_Trailer
 
 /**
- * Unterprogramm um den Link zur SQL Datenbank herzustellen
- *
- * @param
- *            string <code>$db_proj</code> Falls mehrer Datenbanken benutzt werden (
- * @return array Datenbank Handle
- *
- * @global boolean $debug Anzeige von Debug- Informationen: if ($debug) { echo "Text" }
- * @global string $LinkDB_database Datenbank- Name
- *         - diese wird in Funktion Tabellen_Spalten_parms (Tabellen_Spalten) verwendet
- *
- */ 
-function link_DB($db_proj = "") 
-{
-    global $debug, $module, $LinkDB_database, $path2ROOT;
-    
-    flow_add($module, "BA_Funcs.lib.php Funct: LinkDB_n");
-    # echo $path2ROOT."login/common/config_d.ini <br> ";
-    $ini_s = $path2ROOT . "login/common/config_s.ini";
-    $ini_s_arr = parse_ini_file($ini_s, true, INI_SCANNER_NORMAL);
-    $hompg = $ini_s_arr['Config']['homp'];
-    $ini_d = $path2ROOT . "login/common/config_d.ini";
-    $ini_arr = parse_ini_file($ini_d, true, INI_SCANNER_NORMAL);
-    # print_r($ini_s_arr); echo "<br>L 0251 ini_s_arr $hompg <br>";
-    
-    $server_name = $_SERVER['SERVER_NAME'];
-    #echo "L 254 srvname $server_name <br>";
-    if (isset($ini_arr)) {
-        if ($server_name == 'localhost') {
-            if (isset($ini_arr[$server_name])) {
-                $dbhost = $ini_arr[$server_name]['l_dbh'];
-                $dbuser = $ini_arr[$server_name]['l_dbu'];
-                $dbpass = $ini_arr[$server_name]['l_dbp'];
-                $database = $ini_arr[$server_name]['l_dbn'];
-            }
-        } else {
-            # echo "L 0264 homp $hompg <br>";
-            $s_a =  explode(".",$server_name);
-            $cnt_s = count($s_a);
-            $s_c =  explode(".",$hompg);
-            $cnt_c = count($s_c);
-            if ($cnt_s < $cnt_c) {
-                if ($s_a[$cnt_s-2] == $s_c[$cnt_c-2]) {
-                    $server_name = "HOST";
-                }
-            }
-            $dbhost = $ini_arr[$server_name]['h_dbh'];
-            $dbuser = $ini_arr[$server_name]['h_dbu'];
-            $dbpass = $ini_arr[$server_name]['h_dbp'];
-            $database = $ini_arr[$server_name]['h_dbn'];
-        }
-        
-        # echo "L 284 linkdb_n dbhost $dbhost dbnam $database user $dbuser <br>";  # pass $dbpass
-        
-        $dblink = mysqli_connect($dbhost, $dbuser, $dbpass) or die('Verbindung zu MySQL gescheitert!' . mysqli_connect_error());
-        
-        mysqli_select_db($dblink, $database) or die("Datenbankzugriff zu $database gescheitert!");
-        # if ($debug) { echo "<pre class=debug> mysqli_select_db:"; print_r($dblink); echo '</pre>'; }
-        mysqli_set_charset($dblink, 'utf8mb4');
-        $LinkDB_database = $database; # wird in Funktion Tabellen_Spalten_v2.php verwendet
-        return $dblink;
-    } else {
-        echo "Configurations-Fehler - keine Datenbank - Abbruch";
-        exit();
-    }
-} # ende linkDB
-
-/**
  * Aufzeichnen der Aufrufe
  *
  *
@@ -610,47 +544,6 @@ function initial_debug($param, $line=0)
         echo '</pre>';
     }
 } // Ende von function
-
-/**
- * Unterprogramm zum Aufruf des mysqli Query
- *
- * @param array $db
- *            Datenbank Handle
- * @param string $sql
- *            SQL- Statement
- * @return array|boolean Antwort des mysqli_query
- *
- * @global boolean $debug Anzeige von Debug- Informationen: if ($debug) { echo "Text" }
- */
-function SQL_QUERY($db, $sql)
-// --------------------------------------------------------------------------------
-{
-    global $debug, $module;
-    
-    flow_add($module, "Funcs.inc Funct: SQL_QUERY sql: $sql ");
-    
-    if ($debug) {
-        echo "<pre class=debug>L 0722 SQL_QUERY $sql</pre>";
-    }
-    # $return = mysqli_query($db,$sql)
-    # or die("<br><b style='color:red;background:white;'>Fehler in mysql Query: <i>".mysqli_error($db)."</i></b> <b><pre style='background:white;'>$sql</pre></b><br>");
-    # if ($debug OR $return===FALSE ) { echo '<pre class=debug>sql result: ' ; print_r($return); echo '</pre>'; }
-    
-    if ($return = mysqli_query($db, $sql)) {
-        # echo "<pre class=debug>L 725 SQL_Query sql $sql <br>result: " ; print_r($return); echo '</pre>';
-        return $return;
-    } else {
-        echo "<br><b style='color:red;background:white;'>Fehler in mysqli_query: <i>" . mysqli_error($db) . "</i></b> <b><pre style='background:white;'>$sql</pre></b><br>";
-        
-        if ($debug or $return === false) {
-            echo '<pre class=debug>sql result: ';
-            print_r($return);
-            echo '</pre>';
-        }
-        exit();
-    }
-    return $return;
-} // Ende von function SQL_QUERY
 
 /**
  * Feststellen welche Tabelle existieren
@@ -833,3 +726,98 @@ function convertInternationalDateToSql(string $inputDate, bool $assumeUSFormat =
     // Ungültiges Datum
     return null;
 }
+
+/**
+ * Unterprogramm zum Schreiben von Eintragungen in LOG Files.
+ *
+ *
+ *
+ * @param string $log_DSN
+ *            Dateiname (wird mit Jahr und .log ergänzt)
+ * @param string $logtext
+ *            Log- Text welcher Einzutragen ist (wird mit Systemdaten ergänzt)
+ * @return string Ergänzter DSN des MonatsLogFiles (mit YYYY und .log)
+ *
+ * @global boolean $debug Anzeige von Debug- Informationen: if ($debug) { echo "Text" }
+ */
+function writelog($log_DSN, $logtext)
+// --------------------------------------------------------------------------------
+{
+    global $debug, $module;
+    
+    flow_add($module, "Funcs.inc Funct: writelog");
+    
+    # Dem FileNamen YYYY- voranstellen
+    $exploded = explode('/', $log_DSN); // zerlegen in ein Array (der FileName ist das letzte Array Element)
+    $exploded[] = date('Y-') . array_pop($exploded) . '.log'; // Datum und Typ zum FileNamen hinzufügen
+    $dsn = implode('/', $exploded); // DSN wieder zusammenfügen
+    if ($debug) {
+        echo "<pre class=debug>writelog log_DSN:$log_DSN dsn: $dsn</pre>";
+    }
+    
+    $eintragen = "\n\n" . date('Y-m-d H:i:s ') . $_SERVER['REQUEST_URI'] . "\n$logtext" . "\nSystemdaten ***************************************************************";
+    if (isset($_SERVER['REMOTE_USER'])) {
+        $eintragen .= "\n         REMOTE_USER: " . $_SERVER['REMOTE_USER'];
+    }
+    $eintragen .= "\n                Host: " . gethostbyaddr($_SERVER["REMOTE_ADDR"]) .
+    # . "\n IP: " . $_SERVER["REMOTE_ADDR"]
+    # . "\n Server name: " . $_SERVER['SERVER_NAME']
+    "\n                Page: " . $_SERVER["REQUEST_URI"];
+    if (isset($_SERVER["HTTP_REFERER"])) {
+        $eintragen .= "\n             Referer: " . $_SERVER["HTTP_REFERER"];
+    }
+    $eintragen .= "\n             Browser: " . $_SERVER["HTTP_USER_AGENT"] . "\nHTTP         _ACCEPT: " . $_SERVER["HTTP_ACCEPT"] . "\nHTTP_ACCEPT_LANGUAGE: " . $_SERVER["HTTP_ACCEPT_LANGUAGE"] . "\nHTTP     _CONNECTION: " . $_SERVER["HTTP_CONNECTION"] . "\n         REMOTE_PORT: " . $_SERVER["REMOTE_PORT"] . "\n**** LOG ENDE *************************************************************";
+    
+    $datei = fopen($dsn, 'at');
+    fputs($datei, mb_convert_encoding($eintragen, "ISO-8859-1"));
+    fclose($datei);
+    
+    if ($debug) {
+        echo "<pre class=debug>Log Record in $dsn<hr>" . nl2br("$eintragen") . "</pre>";
+    }
+    
+    return $dsn;
+} // Ende von function writelog
+
+/**
+ * Unterprogramm zum Schreiben von Eintragungen in LOG Files und versenden einer Mail an die Admins
+ *
+ * @param string $log_DSN
+ *            Name der Log Datei (wird mit Jahr und .log ergänzt)
+ * @param string $logtext
+ *            Text welcher in den LOG Einzutragen ist (wird mit Datum , Uhrzeit und Systemdaten ergänzt)
+ * @param string $MailTo
+ *            Mail Empänger(Liste)
+ * @param string $MailSubject
+ *            Subject Text der EMail
+ * @param string $Mailtext
+ *            Inhalt der Email in HTML format (wird mit Zusatzinformation ergän
+ * @return boolean Rückgabewert: immer True
+ *
+ * @global boolean $debug Anzeige von Debug- Informationen: if ($debug) { echo "Text" }
+ * @global $module Modul-Name für $_SESSION[$module] - Parameter
+ */
+function logandMail($log_DSN, $logtext, $MailTo, $MailSubject, $Mailtext)
+// --------------------------------------------------------------------------------
+{
+    global $debug, $module;
+    
+    flow_add($module, "Funcs.inc Funct: LogandMail");
+    
+    $logtext = htmlspecialchars_decode($logtext, ENT_QUOTES);
+    $logDateiname = writelog($log_DSN, "$MailSubject\n$logtext");
+    $URL = absoluteURL($logDateiname);
+    $dsn = realpath($logDateiname);
+    
+    $Mailbody = $Mailtext . "<br><pre>$logtext</pre>";
+    if ($_SERVER['SERVER_NAME'] != 'localhost') {
+        $Mailbody .= "<p>Die Information wurde im Log Jahresfile <a href='$URL'>$URL</a> gespeichert.</p>";
+    } else {
+        $Mailbody .= "<p>Die Information wurde im Log Jahresfile <q>$dsn</q> gespeichert.</p>";
+    }
+    
+    sendEmail($MailTo, "VFH $module: $MailSubject", $Mailbody);
+    
+    return true;
+} // Ende von function logandMail
+

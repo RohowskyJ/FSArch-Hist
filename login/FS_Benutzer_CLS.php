@@ -24,18 +24,20 @@ class User {
     public function login(string $userId, string $password): bool {
         // Benutzer mit Passwort und Rolle laden
         $sql = "
-            SELECT b.be_id, b.be_uid, e.fe_pw, r.fl_id, rb.fl_beschreibung, rb.fl_modules
+            SELECT b.be_id, b.be_uid , e.fe_pw, r.fl_id, rb.fl_beschreibung, rb.fl_modules
             FROM fv_benutzer b
-            JOIN fv_erlauben e ON b.be_id = e.be_id
-            JOIN fv_rolle r ON b.be_id = r.be_id
-            JOIN fv_rollen_beschr rb ON r.fl_id = rb.fl_id
+            JOIN fv_erlauben e ON b.be_id = e.be_id  
+            LEFT JOIN fv_rolle r ON b.be_id = r.be_id    
+            LEFT JOIN fv_rollen_beschr rb ON r.fl_id = rb.fl_id
             WHERE b.be_uid = :userId
             LIMIT 1
-        ";
+        ";  // // 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute(['userId' => $userId]);
         $user = $stmt->fetch();
-        # var_dump($user);
+      
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['userId' => 'josef@kexi.at']);
         if (!$user) {
             return false; // Benutzer nicht gefunden
         }

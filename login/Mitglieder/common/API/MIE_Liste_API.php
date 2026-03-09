@@ -21,12 +21,10 @@ register_shutdown_function(function() {
 ob_start();
 
 $rootPfad = $_SERVER['DOCUMENT_ROOT'];
-require_once $rootPfad . '/FHArch_Neu/login/BS_BootPfadL_CLS.php';
-
-// Jetzt PathHelper initialisieren
-PathHelper::init('/FHArch_Neu');
-
-// Autoloader registrieren (benötigt initialisierten PathHelper)
+$caller = $_SERVER['REQUEST_URI'];
+$cal_arr = explode("/",$caller);
+require_once $rootPfad . '/'.$cal_arr[1].'/login/BS_BootPfadL_CLS.php';
+PathHelper::init('/'.$cal_arr[1]);  // Basis-URL anpassen
 AppAutoloader::register();
 
 // Optional: prüfen, ob PathHelper geladen ist
@@ -35,7 +33,13 @@ if (!class_exists('PathHelper')) {
 } else {
     error_log("Class PathHelper loaded successfully.");
 }
-error_log(__LINE__);
+
+// Optional: prüfen, ob PathHelper geladen ist
+if (!class_exists('PathHelper')) {
+    error_log("Class PathHelper not found after require_once!");
+} else {
+    error_log("Class PathHelper loaded successfully.");
+}
 
 header('Content-Type: application/json; charset=utf-8');
 

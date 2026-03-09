@@ -47,7 +47,7 @@ final class BS_FormRendererFlex
     private string $module;
     
     /**
-     * @param TableColumnMetadata $meta
+     * @param array TableColumnMetadata $meta
      * @param int $phase
      * @param array $data
      * @param array $errorMsgs

@@ -13,23 +13,24 @@ require_once $path2ROOT . 'login/common/BS_Funcs_lib.php'; // Diverse Unterprogr
 require_once $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
 
 require_once 'FS_Benutzer_CLS.php';
+require_once $path2ROOT . "login/common/FS_Config_lib.php";
 
 // PDO-Instanz (DB-Klasse kommt von dir)
-$pdo = new PDO('mysql:host=localhost;dbname=fharch_comm;charset=utf8mb4', 'root', 'b1teller');
+$pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASS);
 
 $user = new User($pdo);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = $_POST['userId'] ?? '';
     $password = $_POST['password'] ?? '';
-    
+    var_dump($_POST);
     if ($user->login($userId, $password)) {
         // Berechtigungen Session Var
         $_SESSION['BS_Prim']['BE'] = $user->getNutzungsParms();
         
         $nutzerDaten = $user->getNutzungsParms();
         $jsonDaten = json_encode($nutzerDaten, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
-        
+        #var_dump($jsonDaten);
         // PHP-Redirect
         header('Location: FS_C_Menu.php');
         exit;
