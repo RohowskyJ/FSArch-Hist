@@ -43,16 +43,10 @@ require $path2ROOT . 'login/common/FS_CommFuncs_lib.php';
 
 require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
 require $path2ROOT . 'login/common/VF_Const.lib.php';
-
+require $path2ROOT . 'login/common/PHP_Mail_Funcs_lib.php';
+# require $path2ROOT . 'login/common/API/FS_StaatenAutoComp_API.php';
 /*
-require $path2ROOT . 'login/common/BA_HTML_Funcs.lib.php';
 require $path2ROOT . 'login/common/BA_Funcs.lib.php';
-require $path2ROOT . 'login/common/BA_Edit_Funcs.lib.php';
-require $path2ROOT . 'login/common/BA_List_Funcs.lib.php';
-require $path2ROOT . 'login/common/BA_Tabellen_Spalten.lib.php';
-require $path2ROOT . 'login/common/PHP_Mail_Funcs.lib.php';
-require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
-require $path2ROOT . 'login/common/VF_Const.lib.php';
 */
 $flow_list = False;
 
@@ -187,25 +181,7 @@ if ($phase == 1) {
     } else {
         $neu['mi_gebtag'] = convertInternationalDateToSql($neu['mi_gebtag'], $assumeUSFormat = false);
     }
-     /*   
-    // Beispiel: Datum aus $_POST, z.B. '31-12-2025' oder '31.12.2025'
-    $inputDate = $_POST['datum'] ?? ''; // z.B. '31-12-2025' oder '31.12.2025'
-    
-    // Ersetze Punkte durch Bindestriche, damit das Format einheitlich ist
-    $normalizedDate = str_replace('.', '-', $inputDate);
-    
-    // Versuche, das Datum im Format 'd-m-Y' zu parsen
-    $dateObj = DateTime::createFromFormat('d-m-Y', $normalizedDate);
-    
-    if ($dateObj && $dateObj->format('d-m-Y') === $normalizedDate) {
-        // Erfolgreich geparst, jetzt ins SQL-Format umwandeln
-        $sqlDate = $dateObj->format('Y-m-d');
-        echo "SQL-Datum: " . $sqlDate;
-    } else {
-        // Ungültiges Datum
-        echo "Ungültiges Datum: " . htmlspecialchars($inputDate);
-    }
- */
+
     if ($neu['mi_email'] != "") {
         if (! filter_var($neu['mi_email'], FILTER_VALIDATE_EMAIL)) {
             $mail_err = "Invalid email format<br>";

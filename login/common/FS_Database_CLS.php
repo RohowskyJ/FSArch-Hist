@@ -43,6 +43,7 @@ class FS_Database
         'mi_ehrung',
         'mi_anmeld',
         'staaten',
+        'adm-mail',
     ];
     
     /** Erlaubte Rechtewerte für Mandant */
@@ -95,7 +96,9 @@ class FS_Database
         $this->validatePrefix($this->prefix);
         
         // Default-Logfile: neben dem Projekt, in /logs (wenn vorhanden), sonst im aktuellen Verzeichnis
-        $baseDir = defined('FS_LOG_DIR') ? (string)FS_LOG_DIR : (dirname(__FILE__) . DIRECTORY_SEPARATOR . 'logs');
+        $baseDir = $_SERVER['DOCUMENT_ROOT'] . "login" . DIRECTORY_SEPARATOR . "common" . DIRECTORY_SEPARATOR . 'logs';
+        # $baseDir = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . (dirname(__FILE__) . DIRECTORY_SEPARATOR . 'logs');
+       #  $baseDir = defined('FS_LOG_DIR') ? (string)FS_LOG_DIR : (dirname(__FILE__) . DIRECTORY_SEPARATOR . 'logs');
         $this->logFile = rtrim($baseDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'fs_database.log';
         
         $this->requestId = $this->generateRequestId();
@@ -990,6 +993,59 @@ class FS_Database
     public function getModule(int $fmId): ?array
     {
         return $this->selectOne('module', ['fm_id' => $fmId]);
+    }
+    
+    //  --- Admin-E-Mails  ---
+    
+    public function createAdMail(array $data): int
+    {
+        return $this->db->insert(self::TABLE_ADM_MAIL, $data);
+    }
+    
+    public function getAdMailById(int $id): ?array
+    {
+        return $this->db->selectOne(self::TABLE_ADM_MAIL, ['me_id' => $id]);
+    }
+    
+    // Abfrage der mail- Gruppe für Admin- User
+    /**
+     * Liefert Email-Liste als String "a@b.de, c@d.de"
+     * ersetzt:
+     *  SELECT * from fh_m_mail WHERE em_mail_grp = '$mail_grp'
+     *  + je Treffer SELECT * from fv_benutzer WHERE be_id = '$BenNr'
+     *
+     * Annahme:
+     * - adm_mail.be_ids referenziert benutzer.be_id
+     * - Email-Spalte in benutzer heißt bei dir im Legacy: mi_email
+     *   (ggf. anpassen auf be_email o.ä.)
+     */
+    public function getEmailListByGroup(string $mailGrp, bool $onlyActive = true): string
+    {
+        // JOIN statt N+1 Queries
+        $sql = "SELECT DISTINCT b.`be_uid` AS email
+                FROM `fv_adm_mail` m
+                INNER JOIN `fv_benutzer` b
+                    ON b.`be_id` = m.`be_ids`
+                WHERE m.`em_mail_grp` = :grp" .
+                ($onlyActive ? " AND m.`em_active` = 'a'" : "") . "
+                  AND b.`be_uid` IS NOT NULL
+                  AND b.`be_uid` <> ''
+                ORDER BY b.`be_uid` ASC";
+                
+                $rows = $this->query($sql, ['grp' => $mailGrp])->fetchAll();
+                $emails = array_map(static fn($r) => (string)$r['email'], $rows);
+                
+                return implode(', ', $emails);
+    }
+    
+    /**
+     * Alternative: als Array zurückgeben (oft praktischer für Mailer)
+     */
+    public function getEmailsByGroup(string $mailGrp, bool $onlyActive = true): array
+    {
+        $list = $this->getEmailListByGroup($mailGrp, $onlyActive);
+        if ($list === '') return [];
+        return array_values(array_filter(array_map('trim', explode(',', $list))));
     }
     
     

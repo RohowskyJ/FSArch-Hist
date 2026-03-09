@@ -104,7 +104,7 @@ initial_debug('POST', 'GET'); # Wenn $debug=true - Ausgabe von Debug Information
         echo "</div>"; // Ende der Ausgabe- Einheit Feld
 
     echo "<div class='Menu-Separator'>"; // Beginn der Einheit Ausgabe
-    echo " &nbsp &nbsp &nbsp  &nbsp &nbsp &nbsp <a href='/VFH'>LOGOFF (HomePage)</a>";
+    echo " &nbsp &nbsp &nbsp  &nbsp &nbsp &nbsp <a href='../VFH'>LOGOFF (HomePage)</a>";
     echo "</div>"; // Ende der Inhalt Spalte
     
 
