@@ -63,6 +63,9 @@ final class AppAutoloader {
             PathHelper::fs('Mitglieder'),
             PathHelper::fs('Mitglieder/common'),
             PathHelper::fs('Mitglieder/common/API'),
+            PathHelper::fs('LinkBiblArch'),
+            PathHelper::fs('LinkBiblArch/common'),
+            PathHelper::fs('LinkBiblArch/common/API'),
         ];
         
         $candidates = [
