@@ -5,55 +5,96 @@ session_start();
 $path2ROOT = "../";
 
 $debug = false;
-/**
- * Zur Benutzung der neuen, gemeinsamen Bibliotheken
- * die neuen Bibs
- */
+# var_dump($_SERVER);
 require_once $path2ROOT . 'login/common/BS_Funcs_lib.php'; // Diverse Unterprogramme
 require_once $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
 
 require_once 'FS_Benutzer_CLS.php';
 require_once $path2ROOT . "login/common/FS_Config_lib.php";
 
-// PDO-Instanz (DB-Klasse kommt von dir)
 $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASS);
 
 $user = new User($pdo);
-
+$error = "";
+$message = "";
+var_dump($_POST);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = $_POST['userId'] ?? '';
     $password = $_POST['password'] ?? '';
-    var_dump($_POST);
-    if ($user->login($userId, $password)) {
-        // Berechtigungen Session Var
-        $_SESSION['BS_Prim']['BE'] = $user->getNutzungsParms();
-        
-        $nutzerDaten = $user->getNutzungsParms();
-        $jsonDaten = json_encode($nutzerDaten, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
-        #var_dump($jsonDaten);
-        // PHP-Redirect
-        header('Location: FS_C_Menu.php');
-        exit;
+    $pwResetRequested = isset($_POST['pw_reset']) && $_POST['pw_reset'] === 'reset';
+    $pwChangeRequested = isset($_POST['pw_change']) && $_POST['pw_change'] === 'change';
+    if (!empty($_SESSION['password-change_required'])) {$pwChangeRequested = 1;}
+    var_dump($_SESSION);
+    if ($pwResetRequested) {
+        // Passwort-Reset-Logik hier einfügen (z.B. Mail senden)
+        $message = "Passwort-Reset angefordert. Bitte prüfen Sie Ihre E-Mails für weitere Anweisungen.";
+        $return = $user->requestPasswordReset($userId);
     } else {
-        echo "Login fehlgeschlagen. Bitte prüfen Sie Ihre Zugangsdaten.";
+        // Normale Login-Logik
+        if ($user->login($userId, $password)) {
+            $_SESSION['BS_Prim']['BE'] = $user->getNutzungsParms();
+            if ($pwChangeRequested) {
+                header("Location: FS_PWChange.php?userId=$userId");
+            }
+            header('Location: FS_C_Menu.php');
+            exit;
+        } else {
+            $error = "Login fehlgeschlagen. Bitte prüfen Sie Ihre Zugangsdaten.";
+        }
     }
 }
-$header = "";
 
-$header .= "<style>nav{float:left;width:320px;margin:10px;border:3px solid grey;}.cont{border:1px solid grey;}@media print{.nav{display:none;}}</style>  \n";
+$header = "<style>nav{float:left;width:320px;margin:10px;border:3px solid grey;}.cont{border:1px solid grey;}@media print{.nav{display:none;}}</style>\n";
 
-HTML_header('Login zum internen Teil', $header, 'Form', '50em'); # Parm: Titel,Subtitel,HeaderLine,Type,width
+HTML_header('Login zum internen Teil', $header, 'Form', '50em');
 
-initial_debug('SERV', 'PUT', 'GET'); # Wenn $debug=true - Ausgabe von Debug Informationen: $_Server, $_POST, $_GET, $_FILE
-
-
+initial_debug('SERV', 'PUT', 'GET');
 ?>
 
-<form method="post">
+<form method="post" id="loginForm">
    <div style='text-align: center;'>
-    <b>Zum Einloggen den Benutzer- ID und das Passwort eingeben: </b><br> <br>
+    <?php if ($error): ?>
+        <p class="error"><?=htmlspecialchars($error)?></p>
+        <p><label>Passwort-Reset: </label><input type='checkbox' name='pw_reset' id="pw_reset" value='reset'></label></p>
+    <?php else: ?>
+        <?php if ($message): ?>
+            <p class="message"><?=htmlspecialchars($message)?></p>
+        <?php endif; ?>
+    <?php endif; ?>
+
+    <b>Zum Einloggen den Benutzer-ID und das Passwort eingeben:</b><br><br>
     <input type="text" name="userId" placeholder="Benutzer-ID" required><br><br>
-    <input type="password" name="password" placeholder="Passwort" required><br><br>
+    <input type="password" name="password" id="password" placeholder="Passwort" required><br><br>
+
+    <?php if (!$error): ?>
+         <p><label>Passwort-ändern: </label><input type='checkbox' name='pw_change' value='change'></label></p>
+    <?php endif; ?>
+
     <button type="submit">Login</button><br>
   </div> 
 </form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const pwResetCheckbox = document.getElementById('pw_reset');
+    const passwordInput = document.getElementById('password');
+
+    if (pwResetCheckbox) {
+        // Initiale Kontrolle, falls Formular mit Fehler neu geladen wurde und pw_reset schon angehakt ist
+        togglePasswordField();
+
+        pwResetCheckbox.addEventListener('change', togglePasswordField);
+    }
+
+    function togglePasswordField() {
+        if (pwResetCheckbox.checked) {
+            passwordInput.required = false;
+            passwordInput.disabled = true;
+            passwordInput.value = ''; // Passwortfeld leeren, falls etwas drin war
+        } else {
+            passwordInput.required = true;
+            passwordInput.disabled = false;
+        }
+    }
+});
+</script>

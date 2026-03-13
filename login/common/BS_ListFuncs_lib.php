@@ -206,7 +206,7 @@ document.addEventListener("DOMContentLoaded", function() {
         return;
     }
 
-    const apiUrl = "common/API/" + listName + "_Liste_API.php";
+    const apiUrl = "API/" + listName + "_Liste_API.php";
     console.log('apiUrl ', apiUrl);
     
     if (!selectElement) {

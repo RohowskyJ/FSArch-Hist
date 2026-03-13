@@ -6,7 +6,7 @@
  */
 class MI_MemberRepository {
     private PDO $pdo;
-    protected static string $logFile = 'MemberRepository_debug.log.txt';
+    protected static string $logFile = 'MI_MemberRepository_debug.log.txt';
     
     public function __construct(PDO $pdo) {
         $this->pdo = $pdo;

@@ -10,10 +10,10 @@
  */
 session_start();
 
-$module = 'ADM-MI';
+$module = 'OEF-AR';
 $sub_mod = "LIST";
 
-$tabelle = 'fv_mitglieder';// <?php
+$tabelle = 'fv_falink';// <?php
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 ini_set('log_errors', '1');
@@ -35,7 +35,7 @@ AppAutoloader::register();
  */
 
 $_SESSION[$module]['Inc_Arr']  = array();
-$_SESSION[$module]['Inc_Arr'][] = "VS_M_List.php"; 
+$_SESSION[$module]['Inc_Arr'][] = "VS_O_AR_List.php"; 
 
 /**
  * Angleichung an den Root-Path
@@ -58,11 +58,11 @@ $header =   "";
 # ===========================================================================================================
 # Haeder ausgeben
 # ===========================================================================================================
-$ListHead = "Mitglieder- Verwaltung - Administrator ";
+$ListHead = "Links zu Öffentl. Bibliotheken und Archiven";
 $title = "Mitglieder Daten";
 # $TABU = true;
 $TABUcss = true;
-HTML_header('Mitglieder- Verwaltung', $header, 'Admin', '200em'); # Parm: Titel,Subtitel,HeaderLine,Type,width
+HTML_header('Biblitheks- und Archiv- Links', $header, 'Admin', '80em'); # Parm: Titel,Subtitel,HeaderLine,Type,width
 
 $moduleId = $module."-".$sub_mod;
 // Eigene Meldung mit Modulkennung loggen
@@ -83,22 +83,22 @@ if (isset($_POST['phase'])) {
     $phase = 0;
 }
 if ($phase == 99) {
-    header("Location: /login/VF_C_Menu.php");
+    header("Location: /login/FS_C_Menu.php");
 }
-
-# $NeuRec = "momentan ned"; #     "NeuItem" => "<a href='VF_M_Edit.php?ID=0' >Neues Mitglied eingeben</a>"
 
 # ===========================================================================================
 # Definition der Auswahlmöglichkeiten (mittels radio Buttons)
 # ===========================================================================================
 echo "<input type='hidden' id='srch_Id' value=''>";
-$list_ID = 'MI';
-$lTitel = ["Alle" => "Alle Mitglieder", "Mitgl" => "Aktive Mitglieder",
-    "nMitgl" => "Nicht- Aktive Mitgliedert",
-    "Adrlist" => "Adressliste"];
+$list_ID = 'AR';
+$lTitel = ["Alle" => "Alle verfügbaren LINKS "];
+if ($_SESSION['BS_Prim']['Mod']['smod'] == 'ExtStart') {
+    $lTitel = ["Extern" => "Alle verfügbaren LINKS "];
+}
 
-if (isset($_GET['mod_t_id'])) {
-    $mod_t_id = $_GET['mod_t_id'];
+$NeuRec = "";
+if ($_SESSION['BS_Prim']['Mod'] == 'IntStart') {
+    $NeuRec = " &nbsp; &nbsp; &nbsp; <a href='Vs_O_AR_Edit.php?ID=0' > Neuen Datensatz anlegen </a>";
 }
 
 require $path2ROOT . "login/common/BS_ListFuncs_lib.php";
