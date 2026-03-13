@@ -44,6 +44,7 @@ class FS_Database
         'mi_anmeld',
         'staaten',
         'adm-mail',
+        'falinks',
     ];
     
     /** Erlaubte Rechtewerte für Mandant */

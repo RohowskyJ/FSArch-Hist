@@ -48,6 +48,8 @@ $debug = False; // Debug output Ein/Aus Schalter
 
 require $path2ROOT . 'login/common/BS_Funcs_lib.php';
 
+require $path2ROOT . 'login/common/FS_CommFuncs_lib.php';
+
 require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
 require $path2ROOT . 'login/common/VF_Const.lib.php';
 

@@ -57,7 +57,7 @@ class AR_ListRepository {
     {
         // $json = json_encode($row);
         // $this->log("modifyRow wurde aufgerufen, row $json");
-        $fa_id = $ow['fa_id'] ?? 0;
+        $fa_id = $row['fa_id']; // ?? 0;
         
         if ($tabTyp != "Extern") {
             $row['action'] = "<a href='VS_O_AR_Edit.php?ID={$fa_id}'>Edit</a>";

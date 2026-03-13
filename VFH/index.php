@@ -50,24 +50,45 @@ initial_debug('SERV', 'PUT', 'GET'); # Wenn $debug=true - Ausgabe von Debug Info
 <div class='w3-third'>
      <fieldset>
           <div class="nav">
-               <a href="../login/VF_O_MU_List.php"
-                    target='M_Links'>Museen (Feuerwehr und andere Blaulicht
-                    Organisationen)</a> <br />
-                        <a href="../login/LinkBiblArch/VS_O_AR_List.php"
-                    target='A_Links'>Links zu Archiven und Bibliotheken</a> <br />
-
-                  <a href="../login/VF_O_TE_List.php"
-                    target='Veranstalt'>Veranstaltungskalender</a> <br />
-
-                   <a href="../login/VF_O_PR_List.php"
+               <?php 
+               if (is_file('../login/Oeffi/VS_O_MU_List.php')) {
+               ?>
+                    <a href="../login/OeffiVS_O_MU_List.php"
+                      target='M_Links'>Museen (Feuerwehr und andere Blaulicht
+                      Organisationen)</a> <br />
+               <?php   
+               }
+               if (is_file('../login/Oeffi/VS_O_AR_List.php')) {
+               ?>
+                   <a href="../login/Oeffi/VS_O_AR_List.php"
+                        target='A_Links'>Links zu Archiven und Bibliotheken</a> <br />
+               <?php 
+               }
+               if (is_file('../login/Oeffi/VS_O_TE_List.php')) {
+               ?>
+                    <a href="../login/VOeffi/S_O_TE_List.php"
+                        target='Veranstalt'>Veranstaltungskalender</a> <br />
+               <?php 
+               }
+               if (is_file('../login/Oeffi/VS_O_PR_List.php')) {
+               ?>
+                   <a href="../login/Oeffi/VS_O_PR_List.php"
                        target='Presse'>Presse-Information, Spiegel</a> <br />
-
-                  <a href="../login/VF_O_BU_List.php"
+               <?php 
+               }
+               if (is_file('../login/Oeffi/VS_O_BU_List.php')) {
+               ?>
+                   <a href="../login/Oeffi/VS_O_BU_List.php"
                     target='Buch'>Buch - Besprechungen</a> <br />
- 
-                   <a href="../login/VF_O_AN_List.php"
+               <?php 
+               }
+               if (is_file('../login/Oeffi/VS_O_AN_List.php')) {
+               ?>
+                    <a href="../login/Oeffi/VS_O_AN_List.php"
                       target='Marktpl'>Marktplatz</a> <br /> 
- 
+               <?php 
+               }
+               ?>
            
         <a href="scripts/VF_EM_Edit.php">Kontakt
                     (E-Mail)</a> <br />

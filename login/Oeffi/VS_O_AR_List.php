@@ -96,7 +96,6 @@ if ($_SESSION['BS_Prim']['Mod']['smod'] == 'ExtStart') {
     $lTitel = ["Extern" => "Alle verfügbaren LINKS "];
 }
 
-
 $NeuRec = "";
 if ($_SESSION['BS_Prim']['Mod'] == 'IntStart') {
     $NeuRec = " &nbsp; &nbsp; &nbsp; <a href='Vs_O_AR_Edit.php?ID=0' > Neuen Datensatz anlegen </a>";

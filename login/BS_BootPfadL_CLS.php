@@ -1,10 +1,13 @@
 <?php
-// bootstrap.php
+/**
+ * Autoloader: Bereitstellung der Pfade zum laden der Klassen
+ * 
+ */
 
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
 ini_set('log_errors', '1');
-ini_set('error_log', __DIR__ . '/bootstrap_php-error.log.txt');
+ini_set('error_log', __DIR__ . '/BS_BootPfad_php-error.log.txt');
 
 final class PathHelper {
     private static bool $inited = false;
@@ -61,11 +64,19 @@ final class AppAutoloader {
             PathHelper::fs('common'),
             PathHelper::fs('common/API'),
             PathHelper::fs('Mitglieder'),
-            PathHelper::fs('Mitglieder/common'),
-            PathHelper::fs('Mitglieder/common/API'),
-            PathHelper::fs('LinkBiblArch'),
-            PathHelper::fs('LinkBiblArch/common'),
-            PathHelper::fs('LinkBiblArch/common/API'),
+            PathHelper::fs('Mitglieder/API'),
+            PathHelper::fs('Oeffi'),
+            PathHelper::fs('Oeffi/API'),
+            PathHelper::fs('FZG'),
+            PathHelper::fs('FZG/API'),
+            PathHelper::fs('INV'),
+            PathHelper::fs('INV/API'),
+            PathHelper::fs('Arch'),
+            PathHelper::fs('Arch/API'),
+            PathHelper::fs('PSA'),
+            PathHelper::fs('PSA/API'),
+            PathHelper::fs('Foto'),
+            PathHelper::fs('Foto/API'),
         ];
         
         $candidates = [

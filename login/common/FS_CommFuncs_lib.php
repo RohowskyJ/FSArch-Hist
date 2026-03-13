@@ -1,5 +1,7 @@
 <?php 
-
+/** 
+ * Neu aufbau von Funktionen J. Rohowsky ab 2026
+ */
 
 
 
