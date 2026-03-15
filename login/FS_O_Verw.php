@@ -9,9 +9,8 @@
  */
 session_start();
 
-const Module_Name = 'OEF';
-$module = Module_Name;
-# const Tabellen_Name = 'fh_dokumente';
+$module  = 'OEF';
+$sub_mod = 'Alle';
 
 /**
  * Angleichung an den Root-Path
