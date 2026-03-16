@@ -124,7 +124,7 @@ echo "</fieldset>";
 HTML_trailer();
 
 // Lade Payment-Handler Script
-echo "<script src='common/javascript/MIB_Payment.js'></script>";
+echo "<script src='javascript/MIB_Payment.js'></script>";
 
 
 ?>
