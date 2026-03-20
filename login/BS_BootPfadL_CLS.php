@@ -77,6 +77,8 @@ final class AppAutoloader {
             PathHelper::fs('PSA/API'),
             PathHelper::fs('Foto'),
             PathHelper::fs('Foto/API'),
+            PathHelper::fs('Basis'),
+            PathHelper::fs('Basis/API'),
         ];
         
         $candidates = [

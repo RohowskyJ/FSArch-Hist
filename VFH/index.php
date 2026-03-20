@@ -66,7 +66,7 @@ initial_debug('SERV', 'PUT', 'GET'); # Wenn $debug=true - Ausgabe von Debug Info
                }
                if (is_file('../login/Oeffi/VS_O_TE_List.php')) {
                ?>
-                    <a href="../login/VOeffi/S_O_TE_List.php"
+                    <a href="../login/Oeffi/VS_O_TE_List.php"
                         target='Veranstalt'>Veranstaltungskalender</a> <br />
                <?php 
                }
@@ -97,8 +97,8 @@ initial_debug('SERV', 'PUT', 'GET'); # Wenn $debug=true - Ausgabe von Debug Info
             <a href='scripts/VS_M_Anmeld.php' target='MitglAnmeld'>Ich will Mitglied
                     werden</a> <br />
   
-          <a href='../login/FS_login.php' >Login zum internen Bereich </a><br />    <!--   ////////////////7 neu -->
-               <!-- VF_C_Menu_ui_css_v3.php?phase=9 -->
+          <a href='../login/Basis/FS_login.php' >Login zum internen Bereich </a><br />  
+               
           <a href="DSGVO/Datenschutz_allg_Beschreibg.php" target='DSVGO'>Verarbeitungsbeschreibung
                     nach DSGVO</a> <br />
 
