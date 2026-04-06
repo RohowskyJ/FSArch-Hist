@@ -25,8 +25,15 @@ $path2ROOT = "../";
 
 $debug = False; // Debug output Ein/Aus Schalter
 
+/**
+ * Bootstrap: Composer-/Shared-Einstieg
+ */
+require_once __DIR__ . '/../login/Basis/bootstrap.php';
+
+require $path2ROOT .  'login/Basis/BS_Funcs_lib.php';
+
 require $path2ROOT .  'login/common/VF_Comm_Funcs.lib.php';
-require $path2ROOT .  'login/common/BS_Funcs_lib.php';
+
 # require $path2ROOT .  'login/common/BA_Edit_Funcs.lib.php';
 # require $path2ROOT .  'login/common/BS_FormsFlex_CLS.php';
 # require $path2ROOT .  'login/common/BS_TabSpalt_CLS.php';

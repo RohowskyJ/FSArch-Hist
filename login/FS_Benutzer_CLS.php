@@ -5,7 +5,8 @@
  *
  */
 
-require_once "common/PHP_Mail_Funcs_lib.php";
+require_once "Basis/PHP_Mail_Funcs_lib.php";
+
 class User {
     private PDO $pdo; 
     private ?int $be_id = null;

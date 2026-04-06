@@ -6,7 +6,7 @@
  */
 class BE_BenutzerRepository {
     private PDO $pdo;
-    protected static string $logFile = 'MI_MemberRepository_debug.log.txt';
+    protected static string $logFile = 'BE_BenutzerRepository_debug.log.txt';
     
     public function __construct(PDO $pdo) {
         $this->pdo = $pdo;
@@ -139,6 +139,6 @@ class BE_BenutzerRepository {
     {
         $timestamp = date('Y-m-d H:i:s');
         $entry = "[$timestamp] $message" . PHP_EOL;
-        file_put_contents($this->logFile, $entry, FILE_APPEND);
+        file_put_contents(self::$LogFile, $entry, FILE_APPEND);
     }
 }

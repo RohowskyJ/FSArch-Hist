@@ -70,6 +70,10 @@ function HTML_header($title, $head = '', $type = 'Form', $width = '90em')
         $debug = false;
     }
     
+    if (empty($ListHead)) {
+        $ListHead = '';
+    }
+    
     $deb_data = '0';
     if (isset($_POST['phase']) && $_POST['phase'] == '1') {
         $deb_data = '1';
@@ -87,8 +91,8 @@ function HTML_header($title, $head = '', $type = 'Form', $width = '90em')
     }
     
     $page_parm = parse_ini_file('config_s.ini', true, INI_SCANNER_NORMAL);
-    if (is_file($path2ROOT . 'login/common/'.$cfg)) {
-        $page_parm = parse_ini_file($path2ROOT . 'login/common/'.$cfg, true, INI_SCANNER_NORMAL);
+    if (is_file($path2ROOT . 'login/Basis/'.$cfg)) {
+        $page_parm = parse_ini_file($path2ROOT . 'login/Basis/'.$cfg, true, INI_SCANNER_NORMAL);
         # var_dump($page_parm);
     
         $c_Date = date("Ymd");
@@ -119,22 +123,22 @@ function HTML_header($title, $head = '', $type = 'Form', $width = '90em')
     echo "<meta name='copyright' content='Ing. Josef Rohowsky 2020-2026'>";
     echo '<meta name="robots" content="noindex">';
     echo '<meta name="robots" content="nofollow">';
-    if (is_file($path2ROOT . 'login/common/imgs/favicon.ico')) {
-        echo "<link rel='icon' type='image/x-icon' href='" . $path2ROOT . "login/common/imgs/favicon.ico'>";
+    if (is_file($path2ROOT . 'login/Basis/imgs/favicon.ico')) {
+        echo "<link rel='icon' type='image/x-icon' href='" . $path2ROOT . "login/Basis/imgs/favicon.ico'>";
     }
 
-    echo " <link rel='stylesheet' href='" . $path2ROOT . "/login/common/css/w3-5.02.css'  type='text/css'>"; 
-    echo " <link rel='stylesheet' href='" . $path2ROOT . "/login/common/css/add.css' type='text/css'>"; 
-    echo " <link rel='stylesheet' href='" . $path2ROOT . "login/common/css/add_N.css' type='text/css'>"; 
-    echo " <link rel='stylesheet' href='" . $path2ROOT . "login/common/css/jquery-ui.min.css' type='text/css'>"; 
-    echo " <link rel='stylesheet' href='" . $path2ROOT . "login/common/css/opPopOver.css' type='text/css'>";
+    echo " <link rel='stylesheet' href='" . $path2ROOT . "login/Basis/css/w3-5.02.css'  type='text/css'>"; 
+    echo " <link rel='stylesheet' href='" . $path2ROOT . "login/Basis/css/add.css' type='text/css'>"; 
+    echo " <link rel='stylesheet' href='" . $path2ROOT . "login/Basis/css/add_N.css' type='text/css'>"; 
+    echo " <link rel='stylesheet' href='" . $path2ROOT . "login/Basis/css/jquery-ui.min.css' type='text/css'>"; 
+    echo " <link rel='stylesheet' href='" . $path2ROOT . "login/Basis/css/opPopOver.css' type='text/css'>";
 
-    if (strpos($caller,'_Edit') >= 1 || strpos($caller,'M_Anmeld') >= 1 ) {
-        echo " <link rel='stylesheet' href='" . $path2ROOT . "login/common/css/BS_FormsFlex.css' type='text/css'>";
+    if (strpos($caller,'Edit') >= 1 || strpos($caller,'M_Anmeld') >= 1 ) {
+        echo " <link rel='stylesheet' href='" . $path2ROOT . "login/Basis/css/BS_FormsFlex.css' type='text/css'>";
     }
     
     if ( (isset($TABU) && $TABU) || (isset($TABUcss) && $TABUcss) ) {
-        require $path2ROOT . "login/common/TABU_css_lib.php" ;
+        require $path2ROOT . "login/Basis/TABU_css_lib.php" ;
     }
     
     if (isset($module) && $module != "") {
@@ -212,8 +216,8 @@ function HTML_header($title, $head = '', $type = 'Form', $width = '90em')
     
     </style>
     <?php 
-    echo "<script src='" . $path2ROOT . "login/common/javascript/jquery-3.7.1.min.js'></script>";
-    echo "<script src='" . $path2ROOT . "login/common/javascript/jquery-ui.min.js' ></script>";
+    echo "<script src='" . $path2ROOT . "login/Basis/javascript/jquery-3.7.1.min.js'></script>";
+    echo "<script src='" . $path2ROOT . "login/Basis/javascript/jquery-ui.min.js' ></script>";
     
     echo $head;
     echo "</head>";
@@ -243,7 +247,7 @@ function HTML_header($title, $head = '', $type = 'Form', $width = '90em')
         echo "<div class='w3-col s3 m2 l1 ' >"; // div kurzer Teil
         
         if (isset($page_parm['Config']['sign']) && $page_parm['Config']['sign'] != "" ) {
-            echo "<logo><img  src= '".$path2ROOT."login/common/imgs/".$page_parm['Config']['sign']."' width='90%'></logo>";
+            echo "<logo><img  src= '".$path2ROOT."login/Basis/imgs/".$page_parm['Config']['sign']."' width='90%'></logo>";
         }
 
          /**
@@ -333,7 +337,7 @@ function HTML_header($title, $head = '', $type = 'Form', $width = '90em')
         echo "<div class='w3-container' id='header'><fieldset>";  // Seitenkopf start 1.Seite
         echo "<div class='w3-row'>";
         echo "<label><div style='float: left;'> <label>".$page_parm['Config']['inst']."</div></label><br>";
-        echo "<img src='" . $path2ROOT . "login/common/imgs/2013_01_top_72_jr.png' alt='imgs/".$page_parm['Config']['fpage']."' width='98%'>";
+        echo "<img src='" . $path2ROOT . "login/Basis/imgs/2013_01_top_72_jr.png' alt='imgs/".$page_parm['Config']['fpage']."' width='98%'>";
         if ($page_parm['Config']['wart'] == "N") {
         } else {
 
@@ -368,7 +372,7 @@ function HTML_header($title, $head = '', $type = 'Form', $width = '90em')
         <header class="page-header">
             <div class="header-container">
               <div class="logo-container">
-                 <img src="<?php echo $path2ROOT . 'login/common/imgs/' . $logo; ?>" alt="Logo" class="logo" />
+                 <img src="<?php echo $path2ROOT . 'login/Basis/imgs/' . $logo; ?>" alt="Logo" class="logo" />
               </div>
              <div class="text-container">
                  <div class="org-name"><?php echo htmlspecialchars($OrgName); ?></div>
@@ -402,7 +406,7 @@ function HTML_Trailer()
     global $module, $sub_module, $path2ROOT, $TABU ;
 
     if (isset($TABU) && $TABU) {
-        require $path2ROOT . "login/common/TABU_js_lib.php" ;
+        require $path2ROOT . "login/Basis/TABU_js_lib.php" ;
     }
     if (isset($module) && $module != "" ) {
         if (is_file($module."_js.lib.php")) {
