@@ -1,4 +1,8 @@
 <?php
+namespace FSArch\Login\Mitglieder;
+
+use PDO;
+
 /**
  * Liest Daten aus der Mitgliederdatei aus, Auswahl entsprechend der Listentype (alle, nur aktive, Adressliste, ..)
  * @author josef
@@ -63,6 +67,13 @@ class MI_MemberRepository {
         return $rows;
     }
     
+    /**
+     * Änderung von Feldinhalten für die Anzeige
+     * 
+     * @param array $row
+     * @param unknown $tabTyp
+     * @return boolean
+     */
     protected function modifyRow(array &$row, $tabTyp)
     {
         // $json = json_encode($row);
@@ -158,12 +169,9 @@ class MI_MemberRepository {
                     $adresse .= ', ' . trim($row['mi_anschr']);
                 }
                 $row['mi_anschr'] = $adresse;
-                
-                
+                               
                 break;
             default:
-                
-            
         }
   
      

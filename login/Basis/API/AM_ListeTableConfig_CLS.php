@@ -1,6 +1,6 @@
 <?php
 
-namespace FSArch\Login\Mitglieder;
+namespace FSArch\Login\Basis;
 
 use PDO;
 use FSArch\Login\Basis\BS_TableColumnMetadata;
@@ -12,56 +12,37 @@ use FSArch\Login\Basis\BS_TableColumnMetadata;
 
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
-ini_set('error_log', "MIE_TableConfig_php-error.log.txt");
+ini_set('error_log', "AM_ListeTableConfig_php-error.log.txt");
 
-class MIE_EhrungTableConfig {
+class AM_ListeTableConfig {
     /**
      * Liefert die Spalten-Konfiguration für tabulator.js basierend auf dem Listentyp
      * @param string $listType
      * @return array
      */
 
-    private static string $logFile = "MIE_TableConfig_debug.log.txt";
+    private static string $logFile = "AM_ListeTableConfig_debug.log.txt";
     
     public static function getColumns(string $listType, PDO $pdo): array {
-        /*
-        $vfDatabase = VF_Database::getInstance();
-        $vfDatabase->setPrefix('fv_');
-        $pdo = $vfDatabase->getPDO();
-        */
-
-        $json = json_encode($pdo);
-        self::log(__LINE__ . " listType $listType");
-        self::log(__LINE__ . " PDO $json");
-        # self::log(__LINE__ . " VF_Database instance: " . var_export($vfDatabase, true));
-        self::log(__LINE__ . " PDO object: " . var_export($pdo, true));
-        
-        $json = json_encode($pdo);
-        self::log(__LINE__ . " PDO $json");
-
         $sortNo = []; // nicht zu sortierende Spalten
         $hideNo = []; // nicht versteckbare Spalten
         $editable = []; // editierbare Spalten
     
-        $meta = new BS_TableColumnMetadata($pdo, 'fhach_neu', false);
-        $colsByTable = $meta->getColumnsForTables(["fv_mi_ehrungz"]);
-       // $json = json_encode($meta);
-        //self::log(__LINE__ . " Meta $json");
-        
+        $meta = new BS_TableColumnMetadata($pdo, 'fharch_new', false);
+        $colsByTable = $meta->getColumnsForTables(["fv_adm_mail", "fv_ben_dat"]);
+      
         $TabTitles =  [];
         $altTitel = [];
         $showCols = []; // anzuzeigende Spalten
         $altTitel = []; // alternative Titel zu den Feld- Kommentaren
           
-        $altTitel = ["me_id" => "Fortl. Nr.", "mi_id" => "Mitgl. Nr","me_ehrung" => "Ehrung", "me_eh_datum" => "Verleihungs- Datum", 
-            "me_begruendg" => "Begründung", "me_bild1" => "Bild 1", "me_bild2" => "Bild2", "me_bild3" => "Bild3", "me_bild4" => "Bild 4",
-            "me_changed_id" => "Geändert von", "me_changed_at" => "Geändert am"
-        ];       
+        $altTitel = [];       
         
         switch ($listType) {     
             case "Alle":
             default: 
-                $showCols = [ "me_id", "me_ehrung", "me_eh_datum",  "me_begruendg", "me_bild1"]; //  , "me_bild2"
+                $showCols = ["em_id", "em_mail_grp", "fd_name", "fd_email", "em_active"];
+                #$altTitel = ["fd_name" => "Name", "fd_adlesse" => "Adresse" ];
         }
     
         /** erstellen der Titel Header */
@@ -69,11 +50,8 @@ class MIE_EhrungTableConfig {
         $colStyles  = $meta->getStylesMap();
         $colTypes = $meta->getTypesMap();
         $colLength = $meta->getMaxLengthsMap();
-       
-        $json = json_encode($colComment);
-        self::log( __LINE__ . " Kommentare $json  ");
-        
-        $TabTitles[] = ["title" => "Aktion", "field" => "action", "width" =>  6 , "hozAlign" => "center",  "headerSort" => false ,  "formatter" => "html"];
+      
+        $TabTitles[] = ["title" => "Aktion", "field" => "action", "width" =>  6 , "hozAlign" => "center",  "headerSort" => false ,  "formatter" => "html" ];
         foreach ($showCols as $fldName ) { 
            $titel = "";
             if (isset($altTitel[$fldName]) AND $altTitel[$fldName] !=  "" ) {
@@ -83,19 +61,21 @@ class MIE_EhrungTableConfig {
             } else {
                 $titel = ucfirst($fldName);
             }
+            
             $format = "plaintext";
-            if ($fldName == 'mi_gebtag') {
-                $format =   "html" ;
-            }
-            if (stripos($fldName, '_bild')) {
-                $TabTitles[] = ["title" => $titel, "field" => $fldName,  "headerFilter" => "input", "formatter" => 'html'];
+            //"fr_aktiv", "fl_beschreibung", "fl_modules",  "fd_ort", "fd_tel", "fd_email"];
+            if ($fldName == 'em_id') {
+                $TabTitles[] = ["title" => $titel, "field" => $fldName,  "width" =>  8 , "hozAlign" => "center", "formatter" => $format ];
+            } elseif ($fldName == 'em_active' ) {
+                $TabTitles[] = ["title" => $titel, "field" => $fldName, "width" =>  25 , "formatter" => $format ];
+            } elseif ($fldName == 'em_mail_gruppe' ) {
+                $TabTitles[] = ["title" => $titel, "field" => $fldName, "width" =>  15 , "formatter" => $format ];
             } else {
                 $TabTitles[] = ["title" => $titel, "field" => $fldName,  "headerFilter" => "input", "formatter" => $format ];
             }
-
+           
         }
         $json = json_encode($TabTitles);
-        self::log("Tabtitles $json");
         
         return $TabTitles;
     }

@@ -1,14 +1,10 @@
 <?php
-use FSArch\Login\Basis\FS_Database;
-use FSArch\Login\Mitglieder\MIE_EhrungRepository;
-use FSArch\Login\Mitglieder\MIE_EhrungTableConfig;
-
 // Fehleranzeige und Logging aktivieren (nur für Debug, im Produktivbetrieb aus)
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/MIE_Liste_API_php-error.log.txt');
+ini_set('error_log', __DIR__ . '/AM_ListeAPI_php-error.log.txt');
 
 // Shutdown-Funktion direkt am Anfang registrieren
 register_shutdown_function(function() {
@@ -20,49 +16,62 @@ register_shutdown_function(function() {
         file_put_contents(__DIR__ . '/fatal_error.log', $message, FILE_APPEND);
     }
 });
+
+    /**
+     * Pfad- Helfer
+     *
+     * @var string $rootPfad
+     */
+    $rootPfad = $_SERVER['DOCUMENT_ROOT'];
+    $caller = $_SERVER['REQUEST_URI'];
+    $cal_arr = explode("/", $caller);
+    require_once $rootPfad . '/'.$cal_arr[1].'/login/BS_BootPfadL_CLS.php';
+    PathHelper::init('/'.$cal_arr[1]);  // Basis-URL anpassen
+    AppAutoloader::register();
+    
+    // Optional: prüfen, ob PathHelper geladen ist
+    if (!class_exists('PathHelper')) {
+        error_log("Class PathHelper not found after require_once!");
+    } else {
+        error_log("Class PathHelper loaded successfully.");
+    }
+    
+    use FSArch\Login\Basis\FS_Database;
+    use FSArch\Login\Basis\AM_ListeRepository;
+    use FSArch\Login\Basis\AM_ListeTableConfig;
     
 // Output Buffering starten, um unerwünschte Ausgabe zu kontrollieren
 ob_start();
 
-$rootPfad = $_SERVER['DOCUMENT_ROOT'];
-$caller = $_SERVER['REQUEST_URI'];
-$cal_arr = explode("/",$caller);
-require_once $rootPfad . '/'.$cal_arr[1].'/login/BS_BootPfadL_CLS.php';
-PathHelper::init('/'.$cal_arr[1]);  // Basis-URL anpassen
-AppAutoloader::register();
-
-// Optional: prüfen, ob PathHelper geladen ist
-if (!class_exists('PathHelper')) {
-    error_log("Class PathHelper not found after require_once!");
-} else {
-    error_log("Class PathHelper loaded successfully.");
-}
-
-// Optional: prüfen, ob PathHelper geladen ist
-if (!class_exists('PathHelper')) {
-    error_log("Class PathHelper not found after require_once!");
-} else {
-    error_log("Class PathHelper loaded successfully.");
-}
-
-header('Content-Type: application/json; charset=utf-8');
-
 try {
+
+    header('Content-Type: application/json; charset=utf-8');
+    
     $vfDatabase = FS_Database::getInstance();
     $pdo = $vfDatabase->getPDO();
-    $repo = new MIE_EhrungRepository($pdo);
+    $repo = new AM_ListeRepository($pdo);
+    
+    // Debug-Ausgabe als Log, nicht als var_dump
+    error_log("Repo Objekt: " . print_r($repo, true));
     
     // Parameter aus GET oder POST
+    
     $listType = $_GET['T_List'] ?? 'Alle';
     $search = $_GET['search'] ?? null;
     
-    $data = $repo->getEhrungen($listType, $search);
-    $columns = MIE_EhrungTableConfig::getColumns($listType, $pdo);
+    error_log("Suchparameter: " . var_export($search, true));
+    
+    $data = $repo->getAdmEmail($listType, $search);
+    $columns = AM_ListeTableConfig::getColumns($listType, $pdo);
+    
+    error_log("Columns: " . print_r($columns, true));
     
     $response = [
         'columns' => $columns,
         'data' => $data,
     ];
+    
+    error_log("Response Array: " . print_r($response, true));
     
     $json = json_encode($response);
     
@@ -75,9 +84,8 @@ try {
         exit;
     }
     
-    // Vor dem Ausgeben den Output Buffer leeren, um unerwünschte Ausgabe zu vermeiden
+    // Output Buffer leeren und JSON ausgeben
     ob_end_clean();
-    
     echo $json;
     
 } catch (Exception $e) {
@@ -85,6 +93,5 @@ try {
     $errorMsg = $e->getMessage();
     error_log("Exception: $errorMsg");
     echo json_encode(['error' => "Exception: $errorMsg"]);
+    ob_end_flush();
 }
-
-ob_end_flush();

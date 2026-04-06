@@ -24,15 +24,26 @@ $path2ROOT = "../";
 
 $debug = true; // Debug output Ein/Aus Schalter
 
-if (!is_file($path2ROOT . "/login/common/config_d.ini") ||  !is_file($path2ROOT . "login/common/config_m.ini") || !is_file($path2ROOT . "login/common/config_s.ini")  ) {
+if ($_SERVER['HTTP_HOST'] == 'localhost') {
+    $SI = "l";
+} else {
+    $SI = "vfh";
+}
+
+if (!is_file($path2ROOT . "login/Basis/config_d.ini") ||  !is_file($path2ROOT . "login/Basis/config_m.ini") || !is_file($path2ROOT . "login/Basis/config_s_".$SI.".ini")  ) {
     echo __LINE__ . " config- dateien sind da, will trotzdem installieren <br>";
     # header("Location: ". $path2ROOT."VFH/install/install.php");
 }
 /**
+ * Bootstrap: Composer-/Shared-Einstieg
+ */
+require_once '../login/Basis/bootstrap.php';
+
+/**
  * Zur Benutzung der neuen, gemeinsamen Bibliotheken
  * die neuen Bibs
  */
-require $path2ROOT . 'login/common/BS_Funcs_lib.php'; // Diverse Unterprogramme
+require $path2ROOT . 'login/Basis/BS_Funcs_lib.php'; // Diverse Unterprogramme
 require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
 
 $header = "";
@@ -53,7 +64,7 @@ initial_debug('SERV', 'PUT', 'GET'); # Wenn $debug=true - Ausgabe von Debug Info
                <?php 
                if (is_file('../login/Oeffi/VS_O_MU_List.php')) {
                ?>
-                    <a href="../login/OeffiVS_O_MU_List.php"
+                    <a href="../login/Oeffi/VS_O_MU_List.php"
                       target='M_Links'>Museen (Feuerwehr und andere Blaulicht
                       Organisationen)</a> <br />
                <?php   
@@ -104,7 +115,6 @@ initial_debug('SERV', 'PUT', 'GET'); # Wenn $debug=true - Ausgabe von Debug Info
 
          <a href="referate.php" target='referate'>Referate</a> <br />
          <a href="Vorstand.php" target='Vorstand'>Vorstandsmitglieder </a> <br />
-
 
           </div>
      </fieldset>

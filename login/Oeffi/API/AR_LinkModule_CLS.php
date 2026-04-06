@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+use FSArch\Login\Basis\FS_Database;
+
 /**
  * Beispiel einer modularen DB-Klasse für die Tabellen fv_links
  * mit Dependency Injection der Basis-Datenbankklasse VF_Database.

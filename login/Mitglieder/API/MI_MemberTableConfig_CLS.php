@@ -1,17 +1,23 @@
 <?php
+namespace FSArch\Login\Mitglieder;
 
-/** 
- * Erstellen der Header- Ttiteln für Mitglieder- Listen
- * 
- */
+use PDO;
+use FSArch\Login\Basis\BS_TableColumnMetadata;
 
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', "MI_TableConfig_php-error.log.txt");
 
+/**
+ * ADefinition der Tabellen- Header- Zeile 
+ * 
+ * @author josef
+ *
+ */
 class MI_MemberTableConfig {
     /**
      * Liefert die Spalten-Konfiguration für tabulator.js basierend auf dem Listentyp
+     * 
      * @param string $listType
      * @return array
      */
@@ -28,12 +34,12 @@ class MI_MemberTableConfig {
         
         $json = json_encode($pdo);
         # self::log(__LINE__ . " PDO $json");
-        */
+       */
         $sortNo = []; // nicht zu sortierende Spalten
         $hideNo = []; // nicht versteckbare Spalten
         $editable = []; // editierbare Spalten
     
-        $meta = new BS_TableColumnMetadata($pdo, 'fharch_neu', false);
+        $meta = new BS_TableColumnMetadata($pdo, 'fharch_new', false);
         $colsByTable = $meta->getColumnsForTables(["fv_mitglieder"]);
        // $json = json_encode($meta);
         //self::log(__LINE__ . " Meta $json");
