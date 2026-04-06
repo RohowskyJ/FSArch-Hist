@@ -1,0 +1,98 @@
+/* Eigenes CSS für Sticky Header und Responsiveness */
+/* Basis-Styles für die Tabelle (kann mit theme.default.css kombiniert werden) */
+.tablesorter {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #fafafa;
+    margin: 10px 0 15px;
+    font-size: 14px;
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+/* Tabellenkopf mit Sticky Header */
+.tablesorter thead tr {
+    background-color: #e6e6e6;
+    color: #333;
+    font-weight: bold;
+    cursor: pointer;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 2px solid #ccc;
+}
+
+/* Tabellenzellen */
+.tablesorter th,
+.tablesorter td {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    white-space: nowrap; /* Verhindert Zeilenumbruch in Zellen */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Hover-Effekt für Zeilen */
+.tablesorter tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Sortierpfeile (Standard-Icons vom Tablesorter-Theme) */
+.tablesorter thead .header {
+    background-repeat: no-repeat;
+    background-position: right center;
+    padding-right: 20px;
+}
+
+.tablesorter thead .headerSortUp {
+    background-image: url('https://mottie.github.io/tablesorter/css/images/asc.gif');
+}
+
+.tablesorter thead .headerSortDown {
+    background-image: url('https://mottie.github.io/tablesorter/css/images/desc.gif');
+}
+
+/* Responsiveness: Tabelle horizontal scrollbar bei kleinen Bildschirmen */
+@media (max-width: 768px) {
+    .tablesorter {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch; /* sanftes Scrollen auf iOS */
+    }
+    
+    /* Optional: Header fixieren, wenn horizontal gescrollt wird */
+    .tablesorter thead tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+    
+    .tablesorter tbody {
+        display: block;
+        max-height: 400px; /* max Höhe für Scrollbereich */
+        overflow-y: auto;
+    }
+    
+    .tablesorter tbody tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+}
+
+/* Druckoptimierung: Tabellenkopf auf jeder Seite */
+@media print {
+    thead {
+        display: table-header-group;
+    }
+    #column-controls {
+    display: none;
+}
+}
+
+/* Steuerung der Spalten-Checkboxen */
+#column-controls label {
+margin-right: 10px;
+cursor: pointer;
+user-select: none;
+}

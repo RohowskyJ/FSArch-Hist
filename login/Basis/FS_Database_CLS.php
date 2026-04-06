@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+namespace FSArch\Login\Basis;
+
 $moduleId = 'ADM-DB';
 
 require_once 'FS_Config_lib.php';
@@ -100,7 +102,7 @@ class FS_Database
         $baseDir = $_SERVER['DOCUMENT_ROOT'] . "login" . DIRECTORY_SEPARATOR . "common" . DIRECTORY_SEPARATOR . 'logs';
         # $baseDir = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . (dirname(__FILE__) . DIRECTORY_SEPARATOR . 'logs');
        #  $baseDir = defined('FS_LOG_DIR') ? (string)FS_LOG_DIR : (dirname(__FILE__) . DIRECTORY_SEPARATOR . 'logs');
-        $this->logFile = rtrim($baseDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'fs_database.log';
+        $this->logFile = rtrim($baseDir, DIRECTORY_SEPARATOR) . 'fs_database.log.txt';
         
         $this->requestId = $this->generateRequestId();
         
@@ -329,7 +331,6 @@ class FS_Database
             throw $e;
         }
     }
-    
     
     // ---------------------------------------------------------------------
     // CRUD (generisch)
@@ -736,6 +737,27 @@ class FS_Database
     }
     
     /**
+     * Rollenl Eintrag für Benutzer anlegen
+     * @param array $data ['be_ids'=>int, 'em_mail_grp'=>string, 'em_active'=>string, 'em_new_uid'=>int, 'em_changed_uid'=>string]
+     * @return int Insert ID
+     */
+    public function createRoleByBen(array $data): int
+    {
+        return $this->insert('rolle', $data);
+    }
+    
+    /**
+     * Rollen- Eintragfür Benutzer aktualisieren
+     * @param int $emId
+     * @param array $data
+     * @return int affected rows
+     */
+    public function updateRoleByBenId(int $beId, array $data): int
+    {
+        return $this->update('rolle', $data, ['be_id' => $beId]);
+    }
+    
+    /**
      * Rolle zuweisen (fv_rolle)
      */
     public function assignRole(int $beId, int $flId, array $audit = []): int
@@ -756,7 +778,7 @@ class FS_Database
         $tblRolle = $this->table('rolle');
         $tblBeschr = $this->table('rollen_beschr');
         
-        $sql = "SELECT r.fr_id, r.fl_id, b.fl_Beschreibung, b.fl_module, b.fl_eigner
+        $sql = "SELECT r.fr_id, r.fl_id, r.fl_aktiv, b.fl_Beschreibung, b.fl_module, b.fl_eigner
                 FROM `{$tblRolle}` r
                 INNER JOIN `{$tblBeschr}` b ON b.fl_id = r.fl_id
                 WHERE r.be_id = :be_id
@@ -764,6 +786,65 @@ class FS_Database
         return $this->query($sql, ['be_id' => $beId])->fetchAll();
     }
     
+    /** 
+     * Rolle einlesen
+     */
+    public function getRoleById(int $frId): array
+    {
+        $tblRolle = $this->table('rolle');
+        $tblBeschr = $this->table('rollen_beschr');
+        
+        $sql = "SELECT r.fr_id, r.be_id, r.fl_id, r.fr_aktiv, b.fl_Beschreibung, b.fl_modules
+                FROM `{$tblRolle}` r
+                INNER JOIN `{$tblBeschr}` b ON b.fl_id = r.fl_id
+                WHERE r.fr_id = :fr_id
+                ORDER BY r.fr_id ASC";
+        $result = $this->query($sql, ['fr_id' => $frId])->fetch();
+        return $result === false ? [] : $result;
+    }
+
+    // Rollen- Beschreibungen 
+    /**
+     * Rollen- Beschreibung Eintrag anlegen
+     * @param array $data 
+     * @return int Insert ID
+     */
+    public function createRoleDescr(array $data): int
+    {
+        return $this->insert('role_descr', $data);
+    }
+    
+    /**
+     * Rollen- Beschreibung Eintrag aktualisieren
+     * @param int $emId
+     * @param array $data
+     * @return int affected rows
+     */
+    public function updateRoleDescr(int $flId, array $data): int
+    {
+        return $this->update('rollen_beschr', $data, ['fl_id' => $flId]);
+    }
+    
+    /**
+     * Rollen- Beschreibung  Eintrag holen
+     * @param int $flId
+     * @return array|null
+     */
+    public function getRoleDescr(int $flId): ?array
+    {
+        return $this->selectOne('rollen_beschr', ['fl_id' => $flId]);
+    }
+    
+    /**
+     * Rollen- Beschreibung  Einträge holen
+     * @param int $flId
+     * @return array|null
+     */
+    public function getRoleDescrAll(): ?array
+    {
+        return $this->select('rollen_beschr');
+    }
+    // Mandanten- Funktionen
     /**
      * Mandantenrecht setzen (fv_mand_erl)
      * fu_erlauben: read|update|nix (set)
@@ -870,13 +951,66 @@ class FS_Database
     }
     
     /**
-     * Admin-Mail Eintrag holen
+     * Admin-Mail Eintrag nach ID holen
      * @param int $emId
      * @return array|null
      */
-    public function getAdminMail(int $emId): ?array
+    public function getAdminMailById(int $emId): ?array
     {
         return $this->selectOne('adm_mail', ['em_id' => $emId]);
+    }
+    
+
+    /**
+     * Holt Mitglieder-Daten basierend auf dem Listentyp und optionalen Suchparametern
+     * @param string $listType z.B. 'Alle', 'Aktiv', 'InAktiv', ...
+     * @param string|null $search optionaler Suchstring
+     * @return array
+     */
+    public function getAdminMailByIdBE(int $emId, int $beId): array {
+        // SQL mit JOIN auf fv_ben_dat (Alias b) und fv_adm_mail (Alias a)
+        $sql = "
+        SELECT
+            a.em_id,
+            a.be_ids,
+            a.em_active,
+            a.em_mail_grp,
+            b.fd_name,
+            b.fd_email
+        FROM fv_adm_mail a
+        LEFT JOIN fv_ben_dat b ON b.be_id = a.be_ids
+    ";
+        
+        $where = [];
+        $params = [];
+        $orderBy = "ORDER BY b.fd_id";
+        
+        // Filter auf emId, falls angegeben (ungleich 0 oder größer 0)
+        if ($emId > 0) {
+            $where[] = "a.em_id = :emId";
+            $params[':emId'] = $emId;
+        }
+        
+        // Filter auf beId
+        if ($beId > 0) {
+            $where[] = "b.be_id = :beId";
+            $params[':beId'] = $beId;
+        }
+        
+        // Falls WHERE-Bedingungen existieren, anfügen
+        if (!empty($where)) {
+            $sql .= " WHERE " . implode(" AND ", $where);
+        }
+        
+        // ORDER BY anfügen
+        $sql .= " " . $orderBy;
+        
+        // Beispiel: Annahme, es gibt eine PDO-Verbindung $this->pdo
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        
+        // Ergebnis als Array zurückgeben
+        return $stmt->fetch();
     }
     
     /**
@@ -928,6 +1062,16 @@ class FS_Database
     public function getUserDataByUserId(int $beId): ?array
     {
         return $this->selectOne('ben_dat', ['be_id' => $beId]);
+    }
+    
+    /**
+     * Benutzerdaten nach Benutzer-ID holen
+     * @param int $beId
+     * @return array|null
+     */
+    public function getUserDataById(int $fdId): ?array
+    {
+        return $this->selectOne('ben_dat', ['fd_id' => $fdId]);
     }
     
     // fv_mandant (Mandanten-Stamm)

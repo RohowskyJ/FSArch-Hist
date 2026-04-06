@@ -18,6 +18,10 @@
  *   // usw.
  */
 
+namespace FSArch\Login\Basis;
+
+use PDO;
+
 class BS_TableColumnMetadata
 {
     /** @var PDO */

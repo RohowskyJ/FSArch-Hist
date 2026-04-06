@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+namespace FSArch\Login\Basis;
+
 /**
  * BS_FormRendererFlex
  * ----------------
@@ -133,7 +135,7 @@ final class BS_FormRendererFlex
     // Seitentitel (neutral, kann per CSS überschrieben werden)
     public function renderHeader(string $text): string
     {
-        $style = "background-color:#b0b0b0;color:#333;font-size:0.95em;text-align:center;
+        $style = "background-color:#c0c0c0;color:#333;font-size:1.1em;text-align:center;
                   padding:0.5em 1em;margin:1em 0;font-weight:700;border-radius:4px;";
         return "<div style=\"$style\">".$this->esc($text)."</div>";
     }
@@ -141,7 +143,7 @@ final class BS_FormRendererFlex
     // Trennzeile / Abschnittsbalken
     public function renderTrenner(string $text): string
     {
-        $style = "background-color:#e0e0e0;height:1.2em;width:100%;margin:1em 0;";
+        $style = "background-color:#d0d0d0;height:1.3em;width:100%;margin:1em 1em;";
         return "<div style=\"$style\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".$this->esc($text)."</div>";
     }
     

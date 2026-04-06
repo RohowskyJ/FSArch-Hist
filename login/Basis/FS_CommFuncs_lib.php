@@ -20,3 +20,19 @@ function AutoCompForm_Staat () {
     </div>
     <?php 
 }
+
+/**
+ * Autocomplete Abfrage für Benutzer- Kurzzeichen
+ * Teil der Form
+ */
+function AutoCompForm_Benutzer () {
+    
+    ?>
+    <div class='field-row'>
+    <div class='field-label'><label for="benutzer">Benutzer auswählen (um zu Ändern):</label></div>
+    <div class='field-control'><input type="text" id="benutzer" name="benutzer" /></div>
+    <!-- Optional: verstecktes Feld für ID -->
+    <input type="hidden" id="ben_id" name="ben_id" />
+    </div>
+    <?php 
+}
