@@ -9,26 +9,44 @@
  */
 session_start(); # die SESSION am leben halten
 
+use FSArch\Login\Basis\FS_Database;
+use FSArch\Login\Basis\BS_TableColumnMetadata;
+
+use FSArch\Login\Mitglieder\MI_MitgliederModule;
+
+// Shutdown-Funktion direkt am Anfang registrieren
+register_shutdown_function(function() {
+    $error = error_get_last();
+    if ($error !== null) {
+        $message = "Shutdown error detected:\n" . print_r($error, true);
+        error_log($message);
+        // Optional: auch in eine separate Datei schreiben
+        file_put_contents(__DIR__ . '/fatal_error.log', $message, FILE_APPEND);
+    }
+});
+    
 $module = 'ADM-MI';
 $sub_mod = 'Ehrg';
 
 $tabelle = 'fv_mi_ehrung';
 
 const Prefix = '';
-
+/*
 // <?php
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 ini_set('log_errors', '1');
 ini_set('error_log', __DIR__ . '/bootstrap_php-error.log.txt');
+*/
 
+/**
+ * Bootstrap: Composer-/Shared-Einstieg
+ */
 $rootPfad = $_SERVER['DOCUMENT_ROOT'];
 $caller = $_SERVER['REQUEST_URI'];
 $cal_arr = explode("/",$caller);
-# var_dump($cal_arr);
-require_once $rootPfad . '/'.$cal_arr[1].'/login/BS_BootPfadL_CLS.php';
-
-PathHelper::init('/'.$cal_arr[1]);  // Basis-URL anpassen
+require_once __DIR__ . '/../Basis/bootstrap.php';
+fsarch_bootstrap_path_init('/'.$cal_arr[1]);
 AppAutoloader::register();
 
 /**
@@ -46,9 +64,11 @@ $_SESSION[$module]['Inc_Arr'][] = "VF_M_EH_Edit.php";
 
 $debug = False; // Debug output Ein/Aus Schalter
 
-require $path2ROOT . 'login/common/BS_Funcs_lib.php';
+require PathHelper::fs('Basis/BS_Funcs_lib.php');
+require PathHelper::fs('Basis/FS_CommFuncs_lib.php');
+#require $path2ROOT . 'login/Basis/BS_Funcs_lib.php';
+#require $path2ROOT . 'login/Basis/FS_CommFuncs_lib.php';
 
-require $path2ROOT . 'login/common/FS_CommFuncs_lib.php';
 
 require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
 require $path2ROOT . 'login/common/VF_Const.lib.php';

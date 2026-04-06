@@ -55,7 +55,7 @@ unset($neu['staat_id']);
 $neu['mi_changed_id'] = $_SESSION['BS_Prim']['BE']['be_id'];
 $id = $neu['mi_id'];
 
-var_dump($neu);
+#var_dump($neu);
 
 if ($neu['mi_id'] == 0) { // Neu anlegen eines Mitglieds- Datensatzes
     
@@ -66,7 +66,7 @@ if ($neu['mi_id'] == 0) { // Neu anlegen eines Mitglieds- Datensatzes
         echo "Exception: " . $e->getMessage();
     }
     
-    var_dump($insert_id);
+#    var_dump($insert_id);
     ob_flush();
     
     
@@ -137,12 +137,12 @@ if ($neu['mi_id'] == 0) { // Neu anlegen eines Mitglieds- Datensatzes
     
     try {
         $result = $mitgl->updateMitglied($id, $neu);
-        var_dump($result);
+        #var_dump($result);
     } catch (Exception $e) {
         echo "Exception: " . $e->getMessage();
     }
     # $result = $mitgl->updateMitglied($id, $neu);
-    var_dump($result);
+    #var_dump($result);
     ob_flush();
 
     $logtext = "Änderungen in $tabelle für " . $neu['mi_name'] . "  " . $neu['mi_vname'] . " " . $_SESSION['neu_mitgl']['neu_mi_id'] . " \nMitgliedsdaten geändert oder neu angelegt von Benutzer $p_uid ";

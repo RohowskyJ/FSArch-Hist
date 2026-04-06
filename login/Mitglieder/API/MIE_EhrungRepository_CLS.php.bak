@@ -43,7 +43,7 @@ class MIE_EhrungRepository {
         try {
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
-            $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
             // Modify rows before returning
             foreach ($rows as &$row) {
@@ -52,7 +52,7 @@ class MIE_EhrungRepository {
             
             return $rows;
             
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             // Log error and return empty array or handle as needed
             self::log("Database error in getEhrungen: " . $e->getMessage());
             return [];

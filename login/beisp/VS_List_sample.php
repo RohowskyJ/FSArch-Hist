@@ -10,17 +10,6 @@
  */
 session_start();
 
-// Shutdown-Funktion direkt am Anfang registrieren
-register_shutdown_function(function() {
-    $error = error_get_last();
-    if ($error !== null) {
-        $message = "Shutdown error detected:\n" . print_r($error, true);
-        error_log($message);
-        // Optional: auch in eine separate Datei schreiben
-        file_put_contents(__DIR__ . '/fatal_error.log', $message, FILE_APPEND);
-    }
-});
-    
 $module = 'ADM-MI';
 $sub_mod = "LIST";
 
@@ -31,13 +20,22 @@ ini_set('log_errors', '1');
 ini_set('error_log', __DIR__ . '/VS_M_List_php-error.log.txt');
 # var_dump($_SERVER);
 
+$rootPfad = $_SERVER['DOCUMENT_ROOT'];
+$caller = $_SERVER['REQUEST_URI'];
+$cal_arr = explode("/",$caller);
+# var_dump($cal_arr);
+require_once $rootPfad . '/'.$cal_arr[1].'/login/BS_BootPfadL_CLS.php';
+
+PathHelper::init('/'.$cal_arr[1]);  // Basis-URL anpassen
+AppAutoloader::register();
+
 /**
  * Includes-Liste
  * enthält alle jeweils includierten Scritpt Files
  */
 
 $_SESSION[$module]['Inc_Arr']  = array();
-$_SESSION[$module]['Inc_Arr'][] = "VS_M_List.php"; 
+$_SESSION[$module]['Inc_Arr'][] = "VS_List_sample.php"; 
 
 /**
  * Angleichung an den Root-Path
@@ -48,25 +46,13 @@ $path2ROOT = "../../";
 
 $debug = False; // Debug output Ein/Aus Schalter
 
-/**
- * Bootstrap: Composer-/Shared-Einstieg mit Pfadhelder
- */
-$rootPfad = $_SERVER['DOCUMENT_ROOT'];
-$caller = $_SERVER['REQUEST_URI'];
-$cal_arr = explode("/",$caller);
-require_once __DIR__ . '/../Basis/bootstrap.php';
-fsarch_bootstrap_path_init('/'.$cal_arr[1]);
+require $path2ROOT . 'login/common/BS_Funcs_lib.php';
 
-require PathHelper::fs('Basis/BS_Funcs_lib.php');
-require PathHelper::fs('Basis/FS_CommFuncs_lib.php');
-    
-# require $path2ROOT . 'login/Basis/BS_Funcs_lib.php';
-# require $path2ROOT . 'login/Basis/FS_CommFuncs_lib.php';
+require $path2ROOT . 'login/common/FS_CommFuncs_lib.php';
 
 require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
 require $path2ROOT . 'login/common/VF_Const.lib.php';
 
-use FSArch\Login\Basis\FS_Database;
 
 $header =   ""; 
 # ===========================================================================================================
@@ -115,8 +101,7 @@ if (isset($_GET['mod_t_id'])) {
     $mod_t_id = $_GET['mod_t_id'];
 }
 
-# require $path2ROOT . "login/Basis/BS_ListFuncs_lib.php";
-require PathHelper::fs('Basis/BS_ListFuncs_lib.php');
+require $path2ROOT . "login/common/BS_ListFuncs_lib.php";
 
 HTML_trailer();
 

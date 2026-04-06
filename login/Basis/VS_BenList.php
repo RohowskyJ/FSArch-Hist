@@ -2,7 +2,7 @@
 <?php
 # session_start();
 /**
- * Mitglieder Verwaltung Liste
+ * Benutzer Verwaltung Liste
  * 
  * @author Josef Rohowsky - neu 2020 - Umstellung Klassen/PDO, Module 2026
  * 
@@ -10,26 +10,24 @@
  */
 session_start();
 
-// Shutdown-Funktion direkt am Anfang registrieren
-register_shutdown_function(function() {
-    $error = error_get_last();
-    if ($error !== null) {
-        $message = "Shutdown error detected:\n" . print_r($error, true);
-        error_log($message);
-        // Optional: auch in eine separate Datei schreiben
-        file_put_contents(__DIR__ . '/fatal_error.log', $message, FILE_APPEND);
-    }
-});
-    
-$module = 'ADM-MI';
+$module = 'ADM-ALL';
 $sub_mod = "LIST";
 
-$tabelle = 'fv_mitglieder';// <?php
+$tabelle = 'fv_benutzer';// <?php
 error_reporting(E_ALL);
-ini_set('display_errors', '1');
+ini_set('display_errors', '0');
 ini_set('log_errors', '1');
-ini_set('error_log', __DIR__ . '/VS_M_List_php-error.log.txt');
+ini_set('error_log', __DIR__ . '/VS_Ben_List_php-error.log.txt');
 # var_dump($_SERVER);
+
+$rootPfad = $_SERVER['DOCUMENT_ROOT'];
+$caller = $_SERVER['REQUEST_URI'];
+$cal_arr = explode("/",$caller);
+# var_dump($cal_arr);
+require_once $rootPfad . '/'.$cal_arr[1].'/login/BS_BootPfadL_CLS.php';
+
+PathHelper::init('/'.$cal_arr[1]);  // Basis-URL anpassen
+AppAutoloader::register();
 
 /**
  * Includes-Liste
@@ -37,7 +35,7 @@ ini_set('error_log', __DIR__ . '/VS_M_List_php-error.log.txt');
  */
 
 $_SESSION[$module]['Inc_Arr']  = array();
-$_SESSION[$module]['Inc_Arr'][] = "VS_M_List.php"; 
+$_SESSION[$module]['Inc_Arr'][] = "VS_BenList.php"; 
 
 /**
  * Angleichung an den Root-Path
@@ -59,7 +57,7 @@ fsarch_bootstrap_path_init('/'.$cal_arr[1]);
 
 require PathHelper::fs('Basis/BS_Funcs_lib.php');
 require PathHelper::fs('Basis/FS_CommFuncs_lib.php');
-    
+
 # require $path2ROOT . 'login/Basis/BS_Funcs_lib.php';
 # require $path2ROOT . 'login/Basis/FS_CommFuncs_lib.php';
 
@@ -72,15 +70,13 @@ $header =   "";
 # ===========================================================================================================
 # Haeder ausgeben
 # ===========================================================================================================
-$ListHead = "Mitglieder- Verwaltung - Administrator ";
-$title = "Mitglieder Daten";
-# $TABU = true;
-$TABUcss = true;
-HTML_header('Mitglieder- Verwaltung', $header, 'Admin', '200em'); # Parm: Titel,Subtitel,HeaderLine,Type,width
+$ListHead = "Benutzer- Verwaltung - Administrator ";
+$title = "Benutzer- Daten";
 
-$moduleId = $module."-".$sub_mod;
-// Eigene Meldung mit Modulkennung loggen
-# $logger->log('Starte Verarbeitung des Moduls', $moduleId, basename(__FILE__));
+$TABUcss = true;
+HTML_header('Benutzer- Verwaltung', $header, 'Admin', '200em'); # Parm: Titel,Subtitel,HeaderLine,Type,width
+
+
 
 // XR_Database mit bestehender PDO-Instanz initialisieren
 $DBD = new FS_Database();
@@ -101,21 +97,16 @@ if ($phase == 99) {
 }
 
 # $NeuRec = "momentan ned"; #     "NeuItem" => "<a href='VF_M_Edit.php?ID=0' >Neues Mitglied eingeben</a>"
-
+$NeuRec = "<a href='VS_BenEdit.php?ID=0'>Neuen Benutzer anlegen</a>";
 # ===========================================================================================
 # Definition der Auswahlmöglichkeiten (mittels radio Buttons)
 # ===========================================================================================
 echo "<input type='hidden' id='srch_Id' value=''>";
-$list_ID = 'MI';
-$lTitel = ["Alle" => "Alle Mitglieder", "Mitgl" => "Aktive Mitglieder",
-    "nMitgl" => "Nicht- Aktive Mitgliedert",
-    "Adrlist" => "Adressliste"];
+$list_ID = 'BE';
+$lTitel = ["Alle" => "Alle Benutzer", "Aktiv" => "Aktive Benutzer",
+    "InAktiv" => "Nicht- Aktive Mitgliedert"];
 
-if (isset($_GET['mod_t_id'])) {
-    $mod_t_id = $_GET['mod_t_id'];
-}
-
-# require $path2ROOT . "login/Basis/BS_ListFuncs_lib.php";
+# require $path2ROOT . "login/common/BS_ListFuncs_lib.php";
 require PathHelper::fs('Basis/BS_ListFuncs_lib.php');
 
 HTML_trailer();

@@ -1,6 +1,6 @@
 <?php
 // Fehleranzeige und Logging aktivieren (nur für Debug, im Produktivbetrieb aus)
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 ini_set('log_errors', 1);
@@ -17,21 +17,24 @@ register_shutdown_function(function() {
     }
 });
 
-// Output Buffering starten, um unerwünschte Ausgabe zu kontrollieren
-ob_start();
+/**
+ * Pfad- Helfer
+ * 
+ * @var string $rootPfad
+ */
 $rootPfad = $_SERVER['DOCUMENT_ROOT'];
 $caller = $_SERVER['REQUEST_URI'];
-$cal_arr = explode("/",$caller);
+$cal_arr = explode("/", $caller);
 require_once $rootPfad . '/'.$cal_arr[1].'/login/BS_BootPfadL_CLS.php';
 PathHelper::init('/'.$cal_arr[1]);  // Basis-URL anpassen
 AppAutoloader::register();
 
-// Optional: prüfen, ob PathHelper geladen ist
-if (!class_exists('PathHelper')) {
-    error_log("Class PathHelper not found after require_once!");
-} else {
-    error_log("Class PathHelper loaded successfully.");
-}
+use FSArch\Login\Basis\FS_Database;
+use FSArch\Login\Mitglieder\MI_MemberRepository;
+use FSArch\Login\Mitglieder\MI_MemberTableConfig;
+
+// Output Buffering starten, um unerwünschte Ausgabe zu kontrollieren
+ob_start();
 
 try {
 

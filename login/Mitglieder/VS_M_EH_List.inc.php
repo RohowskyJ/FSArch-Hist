@@ -23,6 +23,6 @@ $lTitel = array(
 );
 $NeuRec = "<a href='VS_M_EH_Edit.php?ID=0' >Neuen Datensatz eingeben</a>";
 
-require $path2ROOT . "login/common/BS_ListFuncs_lib.php";
+require $path2ROOT . "login/Basis/BS_ListFuncs_lib.php";
 
 ?>

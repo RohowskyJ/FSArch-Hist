@@ -17,15 +17,24 @@ register_shutdown_function(function() {
     }
 });
     
-// Output Buffering starten, um unerwünschte Ausgabe zu kontrollieren
-ob_start();
-
+/**
+ * Pfad- Helfer
+ *
+ * @var Ambiguous $rootPfad 
+ */
 $rootPfad = $_SERVER['DOCUMENT_ROOT'];
 $caller = $_SERVER['REQUEST_URI'];
-$cal_arr = explode("/",$caller);
+$cal_arr = explode("/", $caller);
 require_once $rootPfad . '/'.$cal_arr[1].'/login/BS_BootPfadL_CLS.php';
 PathHelper::init('/'.$cal_arr[1]);  // Basis-URL anpassen
 AppAutoloader::register();
+    
+use FSArch\Login\Basis\FS_Database;
+use FSArch\Login\Mitglieder\MIB_MemberRepository;
+use FSArch\Login\Mitglieder\MIB_MemberTableConfig;
+    
+// Output Buffering starten, um unerwünschte Ausgabe zu kontrollieren
+ob_start();
 
 // Optional: prüfen, ob PathHelper geladen ist
 if (!class_exists('PathHelper')) {

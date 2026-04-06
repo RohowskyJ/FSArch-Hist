@@ -20,14 +20,20 @@ ini_set('error_log', __DIR__ . '/VS_MB_List_php-error.log.txt');
 
 // error_log('nach deb start');
 
+/**
+ * Bootstrap: Composer-/Shared-Einstieg mit Pfadhelder
+ */
 $rootPfad = $_SERVER['DOCUMENT_ROOT'];
 $caller = $_SERVER['REQUEST_URI'];
 $cal_arr = explode("/",$caller);
-# var_dump($cal_arr);
-require_once $rootPfad . '/'.$cal_arr[1].'/login/BS_BootPfadL_CLS.php';
+require_once __DIR__ . '/../Basis/bootstrap.php';
+fsarch_bootstrap_path_init('/'.$cal_arr[1]);
 
-PathHelper::init('/'.$cal_arr[1]);  // Basis-URL anpassen
-AppAutoloader::register();
+require PathHelper::fs('Basis/BS_Funcs_lib.php');
+require PathHelper::fs('Basis/FS_CommFuncs_lib.php');
+
+# require $path2ROOT . 'login/Basis/BS_Funcs_lib.php';
+# require $path2ROOT . 'login/Basis/FS_CommFuncs_lib.php';
 
 /**
  * Includes-Liste
@@ -45,12 +51,13 @@ $path2ROOT = "../../";
 
 $debug = False; // Debug output Ein/Aus Schalter
 
-require $path2ROOT . 'login/common/BS_Funcs_lib.php';
+# require $path2ROOT . 'login/common/BS_Funcs_lib.php';
+# require $path2ROOT . 'login/common/FS_CommFuncs_lib.php';
 
 require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
 require $path2ROOT . 'login/common/VF_Const.lib.php';
 
-require $path2ROOT . 'login/common/FS_CommFuncs_lib.php';
+use FSArch\Login\Basis\FS_Database;
 
 $flow_list = False;
 
@@ -79,7 +86,6 @@ if ($phase == 99) {
 
 $mitgl_nrs = "";
 $mitgl_einv_n = 0;
-
 
 $ber_zeitr = "Bericht per  ";
 $today = date('Y-m-d');
@@ -117,7 +123,8 @@ if (isset($_GET['mod_t_id'])) {
 
 $NeuRec = "";
 
-require $path2ROOT . "login/common/BS_ListFuncs_lib.php";
+# require $path2ROOT . "login/Basis/BS_ListFuncs_lib.php";
+require PathHelper::fs('Basis/BS_ListFuncs_lib.php');
 
 echo "</fieldset>";
 

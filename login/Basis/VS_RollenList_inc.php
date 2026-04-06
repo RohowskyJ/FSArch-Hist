@@ -12,6 +12,6 @@ echo "<input type='hidden' id='srch_Id' value='".$neu['be_id']."'>";
 $list_ID = 'RO';
 $lTitel = ["Alle" => "Alle Rollen"];
 
-require $path2ROOT . "login/common/BS_ListFuncs_lib.php";
-
+# require $path2ROOT . "login/Basis/BS_ListFuncs_lib.php";
+require PathHelper::fs('Basis/BS_ListFuncs_lib.php');
 ?>

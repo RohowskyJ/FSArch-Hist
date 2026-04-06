@@ -15,14 +15,24 @@ ini_set('display_errors', '1');
 ini_set('log_errors', '1');
 ini_set('error_log', __DIR__ . '/bootstrap_php-error.log.txt');
 
+/**
+ * Bootstrap: Composer-/Shared-Einstieg
+ */
 $rootPfad = $_SERVER['DOCUMENT_ROOT'];
 $caller = $_SERVER['REQUEST_URI'];
 $cal_arr = explode("/",$caller);
-# var_dump($cal_arr);
-require_once $rootPfad . '/'.$cal_arr[1].'/login/BS_BootPfadL_CLS.php';
+require_once __DIR__ . '/../Basis/bootstrap.php';
+fsarch_bootstrap_path_init('/'.$cal_arr[1]);
+AppAutoloader::register(); // Für Klassen, die Composer nicht laden kann
 
-PathHelper::init('/'.$cal_arr[1]);  // Basis-URL anpassen
-AppAutoloader::register();
+// Stelle sicher, dass die Klassen geladen sind
+#require_once __DIR__ . '/../Basis/BS_FormRendererFlex_CLS.php';
+#require_once __DIR__ . '/../Basis/BS_TableColumnMetadata_CLS.php';
+
+require PathHelper::fs('Basis/BS_Funcs_lib.php');
+require PathHelper::fs('Basis/FS_CommFuncs_lib.php');
+#require $path2ROOT . 'login/Basis/BS_Funcs_lib.php';
+#require $path2ROOT . 'login/Basis/FS_CommFuncs_lib.php';
 
 /**
  * Angleichung an den Root-Path
@@ -32,10 +42,6 @@ AppAutoloader::register();
 $path2ROOT = "../../";
 
 $debug = False; // Debug output Ein/Aus Schalter
-
-require $path2ROOT . 'login/common/BS_Funcs_lib.php';
-
-require $path2ROOT . 'login/common/FS_CommFuncs_lib.php';
 
 require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
 require $path2ROOT . 'login/common/VF_Const.lib.php';
@@ -48,7 +54,9 @@ initial_debug('POST','GET'); # Wenn $debug=true - Ausgabe von Debug Informatione
 
 // ============================================================================================================
 // Eingabenerfassung und defauls
-// ============================================================================================================
+// =================================
+use FSArch\Login\Basis\FS_Database;
+use FSArch\Login\Basis\BS_TableColumnMetadata;
 
 $DBD = new FS_Database("FV_");
 

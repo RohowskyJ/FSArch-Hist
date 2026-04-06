@@ -25,7 +25,12 @@ $_SESSION[$module]['Inc_Arr'][] = "FS_V_Zentral_Verw.php";
 
 $debug = False; // Debug output Ein/Aus Schalter
 
-require $path2ROOT . 'login/common/BS_Funcs_lib.php';
+/**
+ * Bootstrap: Composer-/Shared-Einstieg
+ */
+require_once __DIR__ . '/../login/Basis/bootstrap.php';
+
+require $path2ROOT . 'login/Basis/BS_Funcs_lib.php';
 require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
 
 $flow_list = False;
@@ -44,7 +49,7 @@ echo "Verwaltung der Mitglieder, Zahlungeingang und Kontrolle, Mitteilung der ge
 echo "<a href='Mitglieder/VS_MitglVerw.php' target='M-Verwaltung'>Mitgliederverwaltung</a>"; # neu OK
 echo "</div>";
 
-if (userHasRole('ADM-MA')) {  // Ist benutzer berechtigt?
+if (userHasRole('ADM-ALLE') || userHasRole('ADM-MA')) {  // Ist benutzer berechtigt?
     echo "<div class='w3-row' >"; // Beginn der Einheit Ausgabe
     echo "<div class='Menu-Separator'>Eigentümerverwaltung </div>";
     echo "Da hier auch Daten von Nicht-Mitgliedern aufgenommen werden können, ist eine eigene Verwaltung ohne Mitglieder-Bezug notwendig.<br>";
@@ -53,15 +58,15 @@ if (userHasRole('ADM-MA')) {  // Ist benutzer berechtigt?
 
     echo "<div class='Menu-Separator'>Liste der Empfänger von administrativen E-Mails (Mitglieds- Neuanmeldung, Bezahlung, ... </div>";;
     echo "<div class='w3-row' >"; // Beginn der Einheit Ausgabe
-    echo "<a href='VF_Z_EM_List.php' target='Mail_List'>Empfänger der automatischen E-Mails</a>"; # neu ok
+    echo "<a href='Basis/VS_AdmEmailList.php' target='Mail_List'>Empfänger der automatischen E-Mails</a>"; # neu ok
     echo "</div>";
 }
  
-if (userHasRole('ADM-MI')) {  // Ist benutzer berechtigt?
+if (userHasRole('ADM-ALLE') || userHasRole('ADM-MA')) {  // Ist benutzer berechtigt?
     echo "<div class='Menu-Separator'>Benutzer- und Zugriffsverwaltung</div>";;
     echo "<div class='w3-row' >"; // Beginn der Einheit Ausgabe
     echo "Pflege der berechtigten Benutzer, Passworte und Berechtigungen.</d><br>";
-    echo "<a href='VF_Z_B_List.php' target='Benutz'>Benutzer- und Zugriffs- Verwaltung </a>"; # neu
+    echo "<a href='Basis/VS_BenList.php' target='Benutz'>Benutzer- und Zugriffs- Verwaltung </a>"; # neu
     echo "</div>";
 }
 
@@ -76,6 +81,7 @@ if (userHasRole('ADM-MI')) {  // Ist benutzer berechtigt?
     echo "<tr><TD>Abkürzungen im Fahrzeug- Gerätebereich  </d><br>";
     echo "<a href='VF_Z_AB_List.php' target='Config'>Abkürzungen</a>"; # neu OK
     echo "</div>";
+    
 if (userHasRole('ADM-ALLE')) {  // Ist benutzer berechtigt?
     echo "<div class='Menu-Separator'>Konfiguration der Seite </div>";
     echo "<div class='w3-row' >"; // Beginn der Einheit Ausgabe

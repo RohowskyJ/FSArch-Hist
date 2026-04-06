@@ -1,5 +1,8 @@
 <?php
 declare(strict_types=1);
+namespace FSArch\Login\Mitglieder; 
+
+use FSArch\Login\Basis\FS_Database;
 
 /**
  * Beispiel einer modularen DB-Klasse für die drei Tabellen fv_mitglieder, fv_mi_bez, fv_mi_ehrung

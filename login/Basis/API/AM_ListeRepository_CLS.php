@@ -9,9 +9,9 @@ use PDO;
  * @author josef
  *
  */
-class RO_ListeRepository {
+class AM_ListeRepository {
     private PDO $pdo;
-    protected static string $logFile = 'RO_ListenRepository_debug.log.txt';
+    protected static string $logFile = 'AM_ListenRepository_debug.log.txt';
     
     public function __construct(PDO $pdo) {
         $this->pdo = $pdo;
@@ -23,33 +23,32 @@ class RO_ListeRepository {
      * @param string|null $search optionaler Suchstring
      * @return array
      */
-    public function getUsersRoles(string $listType, ?string $search = null): array {
+    public function getAdmEMail(string $listType, ?string $search = null): array {
         // SQL mit JOIN auf fv_ben_dat (Alias d) und fv_benutzer (Alias b)
         $sql = "
             SELECT
-                r.fr_id,
-                r.be_id,
-                r.fr_aktiv,
-                r.fl_id,
-                b.fl_id AS bes_fl_id,
-                b.fl_beschreibung,
-                b.fl_modules
-            FROM fv_rolle r
-            LEFT JOIN fv_rollen_beschr b ON b.fl_id = r.fl_id
+                a.em_id,
+                a.be_ids,
+                a.em_active,           
+                a.em_mail_grp,
+                b.fd_name,
+                b.fd_email
+            FROM fv_adm_mail a
+            LEFT JOIN fv_ben_dat b ON b.be_id = a.be_ids
         ";
         
         $where = [];
         $params = [];
-        $orderBy = "ORDER BY b.fl_id";
+        $orderBy = "ORDER BY b.fd_id";
    
         // Suchfilter auf Nachname (fd_name) in fv_ben_dat
         if ($search !== null && trim($search) !== '') {
             if (is_numeric($search)) {
-                $where[] = "r.be_id = :search";
+                $where[] = "b.be_id = :search";
                 $params[':search'] = $search;
             } else {
                 // Falls doch mal ein String gesucht wird, z.B. Name o.ä.
-                $where[] = "r.be_id LIKE :search";
+                $where[] = "b.be_id LIKE :search";
                 $params[':search'] = '%' . $search . '%';
             }
         }
@@ -90,15 +89,15 @@ class RO_ListeRepository {
         // $json = json_encode($row);
         // self::log("modifyRow wurde aufgerufen, row $json");
         
-        $fr_id = $row['fr_id'] ?? 0;
-        $be_id = $row['be_id'] ?? 0;
-        $row['action'] = "<a href='VS_RollenEdit.php?ID={$fr_id}&beId={$be_id}'>Edit</a>";
-        
+        $em_id = $row['em_id'] ?? 0;
+        $be_ids = $row['be_ids'] ?? 0;
+        $row['action'] = "<a href='VS_AdmEmailEdit.php?ID={$em_id}&beId={$be_ids}'>Edit</a>";
+        // $row['fd_name'] .= $row['fd_email'];
  
-        if ($row['fr_aktiv'] == 'i') {
-            $row['fr_aktiv'] = 'Inaktiv';
+        if ($row['em_active'] == 'i') {
+            $row['em_active'] = 'Inaktiv';
         } else {
-            $row['fr_aktiv'] = 'Aktiv';
+            $row['em_active'] = 'Aktiv';
         }
         // Aktion-Spalte mit Edit-Link füllen
        

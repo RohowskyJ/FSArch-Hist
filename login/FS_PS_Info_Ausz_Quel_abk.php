@@ -20,7 +20,12 @@ $path2ROOT = "../";
 
 $debug = False; // Debug output Ein/Aus Schalter
 
-require $path2ROOT . 'login/common/BS_Funcs.lib.php';
+/**
+ * Bootstrap: Composer-/Shared-Einstieg
+ */
+require_once __DIR__ . '/../login/Basis/bootstrap.php';
+
+require $path2ROOT . 'login/Basis/BS_Funcs.lib.php';
 
 initial_debug('POST', 'GET');
 

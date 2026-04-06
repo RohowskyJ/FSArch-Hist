@@ -1,4 +1,6 @@
 <?php
+
+
 /**
  * Liest Daten aus der Mitgliederdatei aus, Auswahl entsprechend der Listentype (alle, nur aktive, Adressliste, ..)
  * @author josef

@@ -7,33 +7,24 @@
  */
 session_start();
 
-use FSArch\Login\Basis\FS_Database;
-use FSArch\Login\Basis\BS_TableColumnMetadata;
-use FSArch\Login\Basis\BS_FormRendererFlex;
-use FSArch\Login\Mitglieder\MI_MitgliederModule;
-
 $module = 'MVW';
 $sub_mod = 'all';
-/*
+
+# $tabelle = 'fv_mitglieder';
+
 error_reporting(E_ALL);
-ini_set('display_errors', '0');
+ini_set('display_errors', '1');
 ini_set('log_errors', '1');
 ini_set('error_log', __DIR__ . '/bootstrap_php-error.log.txt');
-*/
 
-/**
- * Bootstrap: Composer-/Shared-Einstieg
- */
 $rootPfad = $_SERVER['DOCUMENT_ROOT'];
 $caller = $_SERVER['REQUEST_URI'];
 $cal_arr = explode("/",$caller);
-require_once __DIR__ . '/../Basis/bootstrap.php';
-fsarch_bootstrap_path_init('/'.$cal_arr[1]);
-AppAutoloader::register(); // Für Klassen, die Composer nicht laden kann
+# var_dump($cal_arr);
+require_once $rootPfad . '/'.$cal_arr[1].'/login/BS_BootPfadL_CLS.php';
 
-// Stelle sicher, dass die Klassen geladen sind
-require_once __DIR__ . '/../Basis/BS_FormRendererFlex_CLS.php';
-require_once __DIR__ . '/../Basis/BS_TableColumnMetadata_CLS.php';
+PathHelper::init('/'.$cal_arr[1]);  // Basis-URL anpassen
+AppAutoloader::register();
 
 /**
  * Angleichung an den Root-Path
@@ -44,10 +35,9 @@ $path2ROOT = "../../";
 
 $debug = False; // Debug output Ein/Aus Schalter
 
-require PathHelper::fs('Basis/BS_Funcs_lib.php');
-require PathHelper::fs('Basis/FS_CommFuncs_lib.php');
-#require $path2ROOT . 'login/Basis/BS_Funcs_lib.php';
-#require $path2ROOT . 'login/Basis/FS_CommFuncs_lib.php';
+require $path2ROOT . 'login/common/BS_Funcs_lib.php';
+
+require $path2ROOT . 'login/common/FS_CommFuncs_lib.php';
 
 require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
 require $path2ROOT . 'login/common/VF_Const.lib.php';
@@ -62,7 +52,6 @@ initial_debug('POST','GET'); # Wenn $debug=true - Ausgabe von Debug Informatione
 // Eingabenerfassung und defauls
 // ============================================================================================================
 
-use FSArch\Login\Basis\FS_Database;
 $DBD = new FS_Database("FV_");
 #var_dump($DBD);
 $pdo = $DBD->getPDO();
@@ -73,7 +62,7 @@ $meta = new BS_TableColumnMetadata($pdo,'fharch_new',true);
 
 $columnsByTables = $meta->getColumnsForTables(['fv_mitglieder', 'fv_mi_ehrung', 'fv_mi_bez' ]);
 #var_dump($columnsByTables);
-# var_dump($meta);
+var_dump($meta);
 $mitgl = new MI_MitgliederModule($DBD);
 #var_dump($mitgl);
 #var_dump($_SERVER);

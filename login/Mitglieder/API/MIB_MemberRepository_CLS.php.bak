@@ -1,8 +1,5 @@
 <?php
-namespace FSArch\Login\Mitglieder;
-
-use PDO;
-
+namespace FSArch\Login\Mitglieder; 
 /**
  * Liest Daten aus der Mitgliederdatei aus, Auswahl entsprechend der Listentype (alle, nur aktive, Adressliste, ..)
  * @author josef

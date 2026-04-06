@@ -17,21 +17,31 @@ register_shutdown_function(function() {
     }
 });
 
+    /**
+     * Pfad- Helfer
+     *
+     * @var string $rootPfad
+     */
+    $rootPfad = $_SERVER['DOCUMENT_ROOT'];
+    $caller = $_SERVER['REQUEST_URI'];
+    $cal_arr = explode("/", $caller);
+    require_once $rootPfad . '/'.$cal_arr[1].'/login/BS_BootPfadL_CLS.php';
+    PathHelper::init('/'.$cal_arr[1]);  // Basis-URL anpassen
+    AppAutoloader::register();
+    
+    // Optional: prüfen, ob PathHelper geladen ist
+    if (!class_exists('PathHelper')) {
+        error_log("Class PathHelper not found after require_once!");
+    } else {
+        error_log("Class PathHelper loaded successfully.");
+    }
+    
+    use FSArch\Login\Basis\FS_Database;
+    use FSArch\Login\Basis\BE_BenutzerRepository;
+    use FSArch\Login\Basis\BE_BenutzerTableConfig;
+    
 // Output Buffering starten, um unerwünschte Ausgabe zu kontrollieren
 ob_start();
-$rootPfad = $_SERVER['DOCUMENT_ROOT'];
-$caller = $_SERVER['REQUEST_URI'];
-$cal_arr = explode("/",$caller);
-require_once $rootPfad . '/'.$cal_arr[1].'/login/BS_BootPfadL_CLS.php';
-PathHelper::init('/'.$cal_arr[1]);  // Basis-URL anpassen
-AppAutoloader::register();
-
-// Optional: prüfen, ob PathHelper geladen ist
-if (!class_exists('PathHelper')) {
-    error_log("Class PathHelper not found after require_once!");
-} else {
-    error_log("Class PathHelper loaded successfully.");
-}
 
 try {
 

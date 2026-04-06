@@ -1,5 +1,10 @@
 <?php
 
+namespace FSArch\Login\Basis;
+
+use PDO;
+use FSArch\Login\Basis\BS_TableColumnMetadata;
+
 /** 
  * Erstellen der Header- Ttiteln für Mitglieder- Listen
  * 
