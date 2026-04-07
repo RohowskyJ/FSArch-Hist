@@ -21,6 +21,7 @@ class MI_MitgliederModule
     private const TABLE_MI_BEZ = 'mi_bez';
     private const TABLE_MI_EHRUNG = 'mi_ehrung';
     private const TABLE_MI_ANMELD = 'mi_anmeld';
+    private const TABLE_UNTERST = 'unterst';
     
     public function __construct(FS_Database $db)
     {
@@ -128,7 +129,33 @@ class MI_MitgliederModule
         return $this->db->selectOne(self::TABLE_MI_EHRUNG, ['me_id' => $id]);
     }
     
-
+    // --- Unterstützer fv_unterst) ---
+    
+    public function createUnterst(array $data): int
+    {
+        return $this->db->insert(self::TABLE_UNTERST, $data);
+    }
+    
+    public function updateUnterst(int $id, array $data): int
+    {
+        return $this->db->update(self::TABLE_UNTERST, $data, ['fu_id' => $id]);
+    }
+    
+    public function deleteUnterst(int $id): int
+    {
+        return $this->db->delete(self::TABLE_UNTERST, ['fu_id' => $id]);
+    }
+    
+    public function getUnterstById(int $id): ?array
+    {
+        return $this->db->selectOne(self::TABLE_UNTERST, ['fu_id' => $id]);
+    }
+    
+    public function findUnterst(array $where = [], array $orderBy = [], ?int $limit = null, ?int $offset = null): array
+    {
+        return $this->db->select(self::TABLE_UNTERST, $where, ['*'], $orderBy, $limit, $offset);
+    }
+    
 }
 
 /**

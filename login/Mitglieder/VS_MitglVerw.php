@@ -20,9 +20,23 @@ $path2ROOT = "../../";
 
 $debug = False; // Debug output Ein/Aus Schalter
 
+/**
+ * Bootstrap: Composer-/Shared-Einstieg
+ */
+/**
+ * Bootstrap: Composer-/Shared-Einstieg
+ */
+$rootPfad = $_SERVER['DOCUMENT_ROOT'];
+$caller = $_SERVER['REQUEST_URI'];
+$cal_arr = explode("/",$caller);
+require_once __DIR__ . '/../Basis/bootstrap.php';
+fsarch_bootstrap_path_init('/'.$cal_arr[1]);
 
-require $path2ROOT . 'login/common/BS_Funcs_lib.php';
-require $path2ROOT . 'login/common/FS_CommFuncs_lib.php';
+require PathHelper::fs('Basis/BS_Funcs_lib.php');
+require PathHelper::fs('Basis/FS_CommFuncs_lib.php');
+
+# require $path2ROOT . 'login/Basis/BS_Funcs_lib.php';
+# require $path2ROOT . 'login/Basis/FS_CommFuncs_lib.php';
 
 require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
 
@@ -53,7 +67,7 @@ if (userHasRole('ADM-MI')) {  // Ist benutzer berechtigt?
     echo "<div class='Menu-Separator'>Unterstützer- Verwaltung</div>";
     
     echo "<div class='Menu-Line'>"; // Beginn der Einheit Ausgabe
-    echo "<tr><td><a href='VF_M_Unterst_List.php?' target='M-Verwaltung'>Unterstützer</a></td></tr>";
+    echo "<tr><td><a href='VS_UnterstList.php?' target='M-Verwaltung'>Unterstützer</a></td></tr>";
     echo "  </div>";  // Ende Feldname
     
 }

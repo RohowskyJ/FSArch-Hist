@@ -52,7 +52,7 @@ $flow_list = False;
 $title = "E-Mail- Empfänger für automatische E-Mails ";
 
 $ListHead = "Admin- E_Mail Verwaltung - Administrator ";
-$title = "BAdmin- E_Mail- Daten";
+$title = "Admin- E_Mail- Daten";
 
 $TABUcss = true;
 HTML_header($title, '', 'Admin', '90em'); # Parm: Titel,Subtitel,HeaderLine,Type,width

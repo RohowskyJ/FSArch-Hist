@@ -26,8 +26,14 @@ $path2ROOT = "../";
 
 $debug = false; // Debug output Ein/Aus Schalter
 
+/**
+ * Bootstrap: Composer-/Shared-Einstieg
+ */
+require_once __DIR__ . '/../login/Basis/bootstrap.php';
+
+require $path2ROOT . 'login/Basis/BS_Funcs.lib.php';
 require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
-require $path2ROOT . 'login/common/BS_Funcs.lib.php';
+
 
 # $LinkDB_database  = '';
 # $db = LinkDB('VFH');

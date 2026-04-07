@@ -73,7 +73,7 @@ if (userHasRole('ADM-ALLE') || userHasRole('ADM-MA')) {  // Ist benutzer berecht
     echo "<div class='Menu-Separator'>Firmen (Fzg/Gerät - Hersteller/Aufbauer) </div>";
     echo "<div class='w3-row' >"; // Beginn der Einheit Ausgabe
     echo "<tr><TD>Liste Fahrzeug- und Geräte- Hersteller und Aufbauer </d><br>";
-    echo "<a href='VF_Z_FI_List.php' target='Config'>Firmen</a>"; # neu OK
+    echo "<a href='Basis/VS_FirmenList.php' target='Config'>Firmen</a>"; # neu OK target='Config'
     echo "</div>";
     
     echo "<div class='Menu-Separator'>Abkürzungen </div>";
