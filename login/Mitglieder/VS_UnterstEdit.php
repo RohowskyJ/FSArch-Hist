@@ -1,25 +1,29 @@
 <?php
 
 /**
- * Benutzer- verwaltung, Wartung
+ * Unterstützer-  Wartung
  * 
  * @author Josef Rohowsky - neu 2020
  */
 session_start();
 
-$module = 'ADM-ALL';
-$sub_mod = 'Edit';
+use FSArch\Login\Basis\FS_Database;
+use FSArch\Login\Basis\BS_TableColumnMetadata;
+use FSArch\Login\Basis\BS_FormRendererFlex;
+use FSArch\Login\Mitglieder\MI_MitgliederModule;
 
+$module = 'MVW';
+$sub_mod = 'US';
+/*
 error_reporting(E_ALL);
-ini_set('display_errors', '1');
+ini_set('display_errors', '0');
 ini_set('log_errors', '1');
 ini_set('error_log', __DIR__ . '/bootstrap_php-error.log.txt');
-
-$debug = False; // Debug output Ein/Aus Schalter
+*/
 
 /**
-* Bootstrap: Composer-/Shared-Einstieg
-*/
+ * Bootstrap: Composer-/Shared-Einstieg
+ */
 $rootPfad = $_SERVER['DOCUMENT_ROOT'];
 $caller = $_SERVER['REQUEST_URI'];
 $cal_arr = explode("/",$caller);
@@ -27,10 +31,9 @@ require_once __DIR__ . '/../Basis/bootstrap.php';
 fsarch_bootstrap_path_init('/'.$cal_arr[1]);
 AppAutoloader::register(); // Für Klassen, die Composer nicht laden kann
 
-require PathHelper::fs('Basis/BS_Funcs_lib.php');
-require PathHelper::fs('Basis/FS_CommFuncs_lib.php');
-#require $path2ROOT . 'login/Basis/BS_Funcs_lib.php';
-#require $path2ROOT . 'login/Basis/FS_CommFuncs_lib.php';
+// Stelle sicher, dass die Klassen geladen sind
+#require_once __DIR__ . '/../Basis/BS_FormRendererFlex_CLS.php';
+#require_once __DIR__ . '/../Basis/BS_TableColumnMetadata_CLS.php';
 
 /**
  * Angleichung an den Root-Path
@@ -39,31 +42,40 @@ require PathHelper::fs('Basis/FS_CommFuncs_lib.php');
  */
 $path2ROOT = "../../";
 
+$debug = False; // Debug output Ein/Aus Schalter
+
+require PathHelper::fs('Basis/BS_Funcs_lib.php');
+require PathHelper::fs('Basis/FS_CommFuncs_lib.php');
+#require $path2ROOT . 'login/Basis/BS_Funcs_lib.php';
+#require $path2ROOT . 'login/Basis/FS_CommFuncs_lib.php';
+
 require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
 require $path2ROOT . 'login/common/VF_Const.lib.php';
 
 $TABUcss = true;
 $header = "";
-HTML_header('Benutzer- Verwaltung', $header, 'Form', '90em'); # Parm: Titel,Subtitel,HeaderLine,Type,width
+HTML_header('Unterstützer- Verwaltung', $header, 'Form', '90em'); # Parm: Titel,Subtitel,HeaderLine,Type,width
 
 initial_debug('POST','GET'); # Wenn $debug=true - Ausgabe von Debug Informationen: $_POST, $_GET, $_FILES
 
 // ============================================================================================================
 // Eingabenerfassung und defauls
 // ============================================================================================================
-use FSArch\Login\Basis\FS_Database;
-use FSArch\Login\Basis\BS_TableColumnMetadata;
-use FSArch\Login\Basis\BS_FormRendererFlex;
-use FSArch\Login\Mitglieder\MI_MitgliederModule;
 
 $DBD = new FS_Database("FV_");
-
+#var_dump($DBD);
 $pdo = $DBD->getPDO();
+#var_dump($pdo);
 
-$meta = new BS_TableColumnMetadata($pdo,'fharch_new',true);
+$meta = new BS_TableColumnMetadata($pdo,'fharch_new',false);
+#var_dump($meta);
 
-$columnsByTables = $meta->getColumnsForTables(['fv_benutzer', 'fv_ben_dat' ]); // , 'fv_mand_erl', 'fv_rolle', 'fv_rollen_beschr'
-
+$columnsByTables = $meta->getColumnsForTables(['fv_unterst' ]);
+#var_dump($columnsByTables);
+# var_dump($meta);
+$mitgl = new MI_MitgliederModule($DBD);
+#var_dump($mitgl);
+#var_dump($_SERVER);
 // ============================================================================================================
 // Eingabenerfassung und defauls Teil 1 - alle POST Werte werden später in array $neu gestelltt
 // ============================================================================================================
@@ -73,43 +85,41 @@ if (isset($_POST['phase'])) {
     $phase = 0;
 }
 if (isset($_GET['ID'])) {
-    $fd_id = $_GET['ID'];
+    $fu_id = $_GET['ID'];
 } else {
-    $fd_id = "";
+    $fu_id = "";
 }
-if (isset($_POST['fd_id'])) {
-    $fd_id = $_POST['fd_id'];
+if (isset($_POST['fu_id'])) {
+    $fu_id = intval($_POST['fu_id']);
 }
 
 if ($phase == 99) {
-    header('Location: VS_BenList.php');
+    header('Location: VS_UnterstList.php');
 }
 
 # -------------------------------------------------------------------------------------------------------
 # Überschreibe die Werte in array $neu - weitere Modifikationen in Edit_tn_check_v2.php !
 # -------------------------------------------------------------------------------------------------------
 if ($phase == 0) {
-    if ($fd_id == 0) {
-        $neu['fd_id'] = $fd_id;
-        $neu['fd_anrede'] = "Hr.";
-        $neu['fd_tit_vor'] = $neu['fd_name'] = $neu['fd_vname'] = $neu['mi_tit_nach'] = "";
-        $neu['fd_adresse'] =  $neu['fd_plz'] = $neu['fd_ort'] = "";
-        $neu['fd_staat_abk'] = "AT";
-        $neu['staat'] = 'Österreich';
-        $neu['fd_tel'] = $neu['fd_email'] = $neu['fd_email_status'] = $neu['fd_hp'] = "";
-        $neu['fd_geb_dat'] = $neu['fd_sterb_dat'] = $neu['fd_austr_dat'] = "0000-00-00";
-        $neu['fd_changed_id'] = $_SESSION['BS_Prim']['BE']['be_id'];
-        $neu['fd_changed_at'] = date('Y-m-d H:m:s');
-        $neu['be_id'] = 0;
-        $neu['be_mi_id'] = 0;
+    if ($fu_id == 0) {
+        $neu['fu_id'] = $fu_id;
+        $neu['fu_aktiv'] = "J";
+        $neu['fu_kateg'] = "FF";
+        $neu['fu_weihn_post'] = "J";
+        $neu['fu_zugr'] = "N";
+        $neu['fu_tit_vor'] = "";
+        $neu['fu_tit_nach'] = "";
+        $neu['fu_anrede'] = "Hr.";
+        $neu['fu_name'] = $neu['fu_vname'] = "";
+        $neu['fu_dgr'] = $neu['fu_plz'] = $neu['fu_ort'] = $neu['fu_adresse'] = "";
+        $neu['fu_tel'] = $neu['fu_email'] = $neu['fu_orgname'] = "";
+        $neu['fu_changed_id'] = $_SESSION['BS_Prim']['BE']['be_id'];
+        $neu['fu_changed_at'] = date('Y-m-d H:m:s');
     } else {
 
-        $neu = $DBD->getUserDataById($fd_id);
+        $neu = $mitgl->getUnterstById($fu_id);f
         
-        $neu['staat_id'] = ''; 
-        $neu['staat'] = ""; //Auslesen!
-        
-        #var_dump($neu);
+        var_dump($neu);
         
         if ($debug) {
             echo '<pre class=debug>';
@@ -125,14 +135,15 @@ if ($phase == 1) {
     foreach ($_POST as $name => $value) {
         $neu[$name] = trim($value);
     }
+    #var_dump($neu);
 }
 
 switch ($phase) {
     case 0:
-        require 'VS_BenEdit_ph0_inc.php';
+        require 'VS_UnterstEdit_ph0.inc.php';
         break;
     case 1:
-        require "VS_BenEdit_ph1_inc.php";
+        require "VS_UnterstEdit_ph1.inc.php";
         break;
 }
 HTML_trailer();

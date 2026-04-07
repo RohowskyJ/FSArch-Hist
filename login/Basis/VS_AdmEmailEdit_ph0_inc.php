@@ -61,7 +61,7 @@ if (isset($_SESSION['BS_Prim']['Mod']) && $_SESSION['BS_Prim']['Mod']['smod'] ==
     echo "<button type='submit' name='phase' value='1' class='green'>Daten abspeichern</button></p>";
 }
 
-echo "<p><a href='VS_AdmMailist.php'>Zurück zur Liste</a></p>";
+echo "<p><a href='VS_AdmEmailList.php'>Zurück zur Liste</a></p>";
 
 echo "</div>";
 # =========================================================================================================

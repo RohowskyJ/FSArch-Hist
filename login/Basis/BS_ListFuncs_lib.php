@@ -108,7 +108,7 @@ if (isset($NeuRec) ) {
 
 
 <?php 
-# var_dump($_SESSION);
+var_dump($_SESSION);
 echo "<input type='hidden' id='current_user_id' value=".$_SESSION['BS_Prim']['BE']['be_id']." />";
 
 echo "<div id='" .$list_ID. "-table'></div>  ";    
@@ -429,35 +429,6 @@ table.on("cellEdited", function(cell){
         .catch(() => {
             alert("Netzwerkfehler beim Massenupdate");
         });
-    });
-    */
-    
-    // Bezahl - Funktion (veraltet, wird jetzt in MIB_Payment.js behandelt)
-    // Der folgende Listener bleibt als Kommentar erhalten, damit alte Logik nicht
-    // Konflikte mit dem neuen Modul erzeugt.  
-    /*
-    document.querySelector("#" + listName + "-table").addEventListener("click", function(e) {
-        if (e.target && e.target.classList.contains("pay-link")) {
-            e.preventDefault();
-            const tableInstance = Tabulator.findTable("#" + listName + "-table")[0];
-            const cell = tableInstance.getCellFromElement(e.target);
-            if (!cell) {
-                console.error("Zelle nicht gefunden");
-                return;
-            }
-            const row = cell.getRow();
-            const rowData = row.getData();
-
-            if (cell.getValue() !== "€") {
-                console.warn("Status ist nicht 'unpaid', keine Aktion");
-                return;
-            }
-
-            if (!confirm("Mitgliedsbeitrag jetzt verbuchen?")) {
-                return;
-            }
-
-        }
     });
     */
 

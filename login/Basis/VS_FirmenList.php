@@ -10,24 +10,26 @@
  */
 session_start();
 
-$module = 'OEF-AR';
+// Shutdown-Funktion direkt am Anfang registrieren
+register_shutdown_function(function() {
+    $error = error_get_last();
+    if ($error !== null) {
+        $message = "Shutdown error detected:\n" . print_r($error, true);
+        error_log($message);
+        // Optional: auch in eine separate Datei schreiben
+        file_put_contents(__DIR__ . '/fatal_error.log', $message, FILE_APPEND);
+    }
+});
+    
+$module = 'ADM-MI';
 $sub_mod = "LIST";
 
-$tabelle = 'fv_falink';// <?php
+$tabelle = 'fv_mitglieder';// <?php
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 ini_set('log_errors', '1');
 ini_set('error_log', __DIR__ . '/VS_M_List_php-error.log.txt');
 # var_dump($_SERVER);
-
-$rootPfad = $_SERVER['DOCUMENT_ROOT'];
-$caller = $_SERVER['REQUEST_URI'];
-$cal_arr = explode("/",$caller);
-# var_dump($cal_arr);
-require_once $rootPfad . '/'.$cal_arr[1].'/login/BS_BootPfadL_CLS.php';
-
-PathHelper::init('/'.$cal_arr[1]);  // Basis-URL anpassen
-AppAutoloader::register();
 
 /**
  * Includes-Liste
@@ -35,7 +37,7 @@ AppAutoloader::register();
  */
 
 $_SESSION[$module]['Inc_Arr']  = array();
-$_SESSION[$module]['Inc_Arr'][] = "VS_O_AR_List.php"; 
+$_SESSION[$module]['Inc_Arr'][] = "VS_M_List.php"; 
 
 /**
  * Angleichung an den Root-Path
@@ -46,23 +48,36 @@ $path2ROOT = "../../";
 
 $debug = False; // Debug output Ein/Aus Schalter
 
-require $path2ROOT . 'login/common/BS_Funcs_lib.php';
+/**
+ * Bootstrap: Composer-/Shared-Einstieg mit Pfadhelder
+ */
+$rootPfad = $_SERVER['DOCUMENT_ROOT'];
+$caller = $_SERVER['REQUEST_URI'];
+$cal_arr = explode("/",$caller);
+require_once __DIR__ . '/../Basis/bootstrap.php';
+fsarch_bootstrap_path_init('/'.$cal_arr[1]);
 
-require $path2ROOT . 'login/common/FS_CommFuncs_lib.php';
+require PathHelper::fs('Basis/BS_Funcs_lib.php');
+require PathHelper::fs('Basis/FS_CommFuncs_lib.php');
+    
+# require $path2ROOT . 'login/Basis/BS_Funcs_lib.php';
+# require $path2ROOT . 'login/Basis/FS_CommFuncs_lib.php';
 
 require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
 require $path2ROOT . 'login/common/VF_Const.lib.php';
 
+use FSArch\Login\Basis\FS_Database;
 
 $header =   ""; 
 # ===========================================================================================================
 # Haeder ausgeben
 # ===========================================================================================================
-$ListHead = "Links zu Öffentl. Bibliotheken und Archiven";
-$title = "Mitglieder Daten";
+$ListHead = "Firmen- Verwaltung - Administrator ";
+$title = "Firmen- Daten";
 
+# $TABU = true;
 $TABUcss = true;
-HTML_header('Biblitheks- und Archiv- Links', $header, 'Admin', '80em'); # Parm: Titel,Subtitel,HeaderLine,Type,width
+HTML_header('Firmen- Verwaltung', $header, 'Admin', '200em'); # Parm: Titel,Subtitel,HeaderLine,Type,width
 
 $moduleId = $module."-".$sub_mod;
 // Eigene Meldung mit Modulkennung loggen
@@ -83,25 +98,28 @@ if (isset($_POST['phase'])) {
     $phase = 0;
 }
 if ($phase == 99) {
-    header("Location: /login/FS_C_Menu.php");
+    header("Location: /login/VF_C_Menu.php");
 }
 
 # ===========================================================================================
 # Definition der Auswahlmöglichkeiten (mittels radio Buttons)
 # ===========================================================================================
 echo "<input type='hidden' id='srch_Id' value=''>";
-$list_ID = 'AR';
-$lTitel = ["Alle" => "Alle verfügbaren LINKS "];
-if ($_SESSION['BS_Prim']['Mod']['smod'] == 'ExtStart') {
-    $lTitel = ["Extern" => "Alle verfügbaren LINKS "];
-}
+$list_ID = 'FI';
+$lTitel = ["Alle" => "Alle Firmen", 
+    "FZGE" => "Alle Fahrzeug- und Geräte- Hersteller / Händler",
+    "AUFB" => "Aufbau- Hersteller / Händler",
+    "GER" => "Geräte- Hersteller / Händler"];
 
-$NeuRec = "";
-if ($_SESSION['BS_Prim']['Mod'] == 'IntStart') {
-    $NeuRec = " &nbsp; &nbsp; &nbsp; <a href='Vs_O_AR_Edit.php?ID=0' > Neuen Datensatz anlegen </a>";
+$NeuRec = "<a href='VS_FirmenEdit.php?ID=0' >Neue Daten eingeben</a>";
+// fi_id
+/*
+if (isset($_GET['mod_t_id'])) {
+    $mod_t_id = $_GET['mod_t_id'];
 }
-
-require $path2ROOT . "login/common/BS_ListFuncs_lib.php";
+*/
+# require $path2ROOT . "login/Basis/BS_ListFuncs_lib.php";
+require PathHelper::fs('Basis/BS_ListFuncs_lib.php');
 
 HTML_trailer();
 

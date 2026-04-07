@@ -31,22 +31,23 @@ class FS_Database
     
     /** Erlaubte Tabellen im "Stammteil" (anpassen/erweitern) */
     private array $allowedTables = [
-        'benutzer',
-        'erlauben',
-        'rolle',
-        'rollen_beschr',
-        'mand_erl',
-        'mandant', // wird als FK referenziert
-        'adm_mail',
-        'ben_dat',
-        'module',
-        'mitglieder',
-        'mi_bez',
-        'mi_ehrung',
-        'mi_anmeld',
-        'staaten',
-        'adm-mail',
-        'falinks',
+        'benutzer',      // Benutzer- Daten
+        'erlauben',      // allgemeine Erlaubnis = Authentifizierung
+        'rolle',         // Rollen- Zuordnung
+        'rollen_beschr', // Rollen-Beschreibugen
+        'mand_erl',   // Mandanten. Zugriffe
+        'mandant',    // wird als FK referenziert
+        'adm_mail',   // automatische Admin- E-Mails
+        'ben_dat',    // Benutzer- Daten
+        'module',     // Module ??
+        'mitglieder', // Mitglieder
+        'mi_bez',     // Mitglieder Berahlung Beitrag
+        'mi_ehrung',  // Mitglieder- Ehrung
+        'mi_anmeld', // Mitglieder- Anmeldung
+        'staaten',  // Staaten
+        'falinks', // Links zu öffentl. Archiven und bibliotheken
+        'firmen',  // Firmen
+        'unterst', // Unterdtützer
     ];
     
     /** Erlaubte Rechtewerte für Mandant */
@@ -960,7 +961,6 @@ class FS_Database
         return $this->selectOne('adm_mail', ['em_id' => $emId]);
     }
     
-
     /**
      * Holt Mitglieder-Daten basierend auf dem Listentyp und optionalen Suchparametern
      * @param string $listType z.B. 'Alle', 'Aktiv', 'InAktiv', ...
@@ -1140,58 +1140,104 @@ class FS_Database
         return $this->selectOne('module', ['fm_id' => $fmId]);
     }
     
-    //  --- Admin-E-Mails  ---
-    
-    public function createAdMail(array $data): int
-    {
-        return $this->db->insert(self::TABLE_ADM_MAIL, $data);
-    }
-    
-    public function getAdMailById(int $id): ?array
-    {
-        return $this->db->selectOne(self::TABLE_ADM_MAIL, ['me_id' => $id]);
-    }
-    
-    // Abfrage der mail- Gruppe für Admin- User
+    //  --- Firmen- Verwaltung  ---
+
     /**
-     * Liefert Email-Liste als String "a@b.de, c@d.de"
-     * ersetzt:
-     *  SELECT * from fh_m_mail WHERE em_mail_grp = '$mail_grp'
-     *  + je Treffer SELECT * from fv_benutzer WHERE be_id = '$BenNr'
-     *
-     * Annahme:
-     * - adm_mail.be_ids referenziert benutzer.be_id
-     * - Email-Spalte in benutzer heißt bei dir im Legacy: mi_email
-     *   (ggf. anpassen auf be_email o.ä.)
+     * Firmen Eintrag anlegen
+     * @param array $data ['be_ids'=>int, 'em_mail_grp'=>string, 'em_active'=>string, 'em_new_uid'=>int, 'em_changed_uid'=>string]
+     * @return int Insert ID
      */
-    public function getEmailListByGroup(string $mailGrp, bool $onlyActive = true): string
+    public function createFirmen(array $data): int
     {
-        // JOIN statt N+1 Queries
-        $sql = "SELECT DISTINCT b.`be_uid` AS email
-                FROM `fv_adm_mail` m
-                INNER JOIN `fv_benutzer` b
-                    ON b.`be_id` = m.`be_ids`
-                WHERE m.`em_mail_grp` = :grp" .
-                ($onlyActive ? " AND m.`em_active` = 'a'" : "") . "
-                  AND b.`be_uid` IS NOT NULL
-                  AND b.`be_uid` <> ''
-                ORDER BY b.`be_uid` ASC";
-                
-                $rows = $this->query($sql, ['grp' => $mailGrp])->fetchAll();
-                $emails = array_map(static fn($r) => (string)$r['email'], $rows);
-                
-                return implode(', ', $emails);
+        return $this->insert('firmen', $data);
     }
     
     /**
-     * Alternative: als Array zurückgeben (oft praktischer für Mailer)
+     * Firmen Eintrag aktualisieren
+     * @param int $emId
+     * @param array $data
+     * @return int affected rows
      */
-    public function getEmailsByGroup(string $mailGrp, bool $onlyActive = true): array
+    public function updateFirmen(int $efiId, array $data): int
     {
-        $list = $this->getEmailListByGroup($mailGrp, $onlyActive);
-        if ($list === '') return [];
-        return array_values(array_filter(array_map('trim', explode(',', $list))));
+        return $this->update('firmen', $data, ['fi_id' => $fiId]);
     }
     
+    /**
+     * Firmen Eintrag nach ID holen
+     * @param int $emId
+     * @return array|null
+     */
+    
+    public function getFirmenById(int $id): ?array
+    {
+        return $this->selectOne('firmen', ['fi_id' => $id]);
+    }
+    
+    /**
+     * Firmen Einträge nach Funktion filtern
+     * @param string|null $group
+     * @param string|null $status 'a'|'i'|'' oder null für alle
+     * @return array
+     */
+    public function getFirmenByFunkt(?string $funkt = null ): array
+    {
+        $where = [];
+        if ($funkt !== null) {
+            $where['fi_funkt'] = $funkt;
+        }
+      
+        return $this->select('firmen', $where);
+    }
+    
+    //  --- Unterstützer und Sponsoren- Verwaltung  ---
+    
+    /**
+     * Unterstüzer Eintrag anlegen
+     * @param array $data ['be_ids'=>int, 'em_mail_grp'=>string, 'em_active'=>string, 'em_new_uid'=>int, 'em_changed_uid'=>string]
+     * @return int Insert ID
+     */
+    public function createUnterst(array $data): int
+    {
+        return $this->insert('unterst', $data);
+    }
+    
+    /**
+     * Unterstüzer  Eintrag aktualisieren
+     * @param int $emId
+     * @param array $data
+     * @return int affected rows
+     */
+    public function updateUnterst(int $efiId, array $data): int
+    {
+        return $this->update('unterst', $data, ['fi_id' => $fiId]);
+    }
+    
+    /**
+     * Unterstüzer  Eintrag nach ID holen
+     * @param int $emId
+     * @return array|null
+     */
+    
+    public function getUnterstById(int $id): ?array
+    {
+        return $this->selectOne('unterst', ['fi_id' => $id]);
+    }
+    
+    /**
+     * Unterstüzer  Einträge nach Funktion filtern
+     * @param string|null $group
+     * @param string|null $status 'a'|'i'|'' oder null für alle
+     * @return array
+     */
+    public function getUnterstByFunkt(?string $kateg = null ): array
+    {
+        $where = [];
+        if ($fkateg !== null) {
+            $where['fu_kateg'] = $kategt;
+        }
+        
+        return $this->select('unterst ', $where);
+    }
     
 }

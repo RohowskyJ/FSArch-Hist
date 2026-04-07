@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Benutzer- verwaltung, Wartung
+ * Firmen- verwaltung, Wartung
  * 
  * @author Josef Rohowsky - neu 2020
  */
@@ -39,12 +39,14 @@ require PathHelper::fs('Basis/FS_CommFuncs_lib.php');
  */
 $path2ROOT = "../../";
 
+
+
 require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
 require $path2ROOT . 'login/common/VF_Const.lib.php';
 
 $TABUcss = true;
 $header = "";
-HTML_header('Benutzer- Verwaltung', $header, 'Form', '90em'); # Parm: Titel,Subtitel,HeaderLine,Type,width
+HTML_header('Firmen- Verwaltung', $header, 'Form', '90em'); # Parm: Titel,Subtitel,HeaderLine,Type,width
 
 initial_debug('POST','GET'); # Wenn $debug=true - Ausgabe von Debug Informationen: $_POST, $_GET, $_FILES
 
@@ -62,7 +64,7 @@ $pdo = $DBD->getPDO();
 
 $meta = new BS_TableColumnMetadata($pdo,'fharch_new',true);
 
-$columnsByTables = $meta->getColumnsForTables(['fv_benutzer', 'fv_ben_dat' ]); // , 'fv_mand_erl', 'fv_rolle', 'fv_rollen_beschr'
+$columnsByTables = $meta->getColumnsForTables(['fv_firmen']);
 
 // ============================================================================================================
 // Eingabenerfassung und defauls Teil 1 - alle POST Werte werden später in array $neu gestelltt
@@ -73,42 +75,32 @@ if (isset($_POST['phase'])) {
     $phase = 0;
 }
 if (isset($_GET['ID'])) {
-    $fd_id = $_GET['ID'];
+    $fi_id = $_GET['ID'];
 } else {
-    $fd_id = "";
+    $fi_id = "0";
 }
-if (isset($_POST['fd_id'])) {
-    $fd_id = $_POST['fd_id'];
+if (isset($_POST['fi_id'])) {
+    $fi_id = $_POST['fi_id'];
 }
 
 if ($phase == 99) {
-    header('Location: VS_BenList.php');
+    header('Location: VS_FirmenList.php');
 }
-
 # -------------------------------------------------------------------------------------------------------
 # Überschreibe die Werte in array $neu - weitere Modifikationen in Edit_tn_check_v2.php !
 # -------------------------------------------------------------------------------------------------------
 if ($phase == 0) {
-    if ($fd_id == 0) {
-        $neu['fd_id'] = $fd_id;
-        $neu['fd_anrede'] = "Hr.";
-        $neu['fd_tit_vor'] = $neu['fd_name'] = $neu['fd_vname'] = $neu['mi_tit_nach'] = "";
-        $neu['fd_adresse'] =  $neu['fd_plz'] = $neu['fd_ort'] = "";
-        $neu['fd_staat_abk'] = "AT";
-        $neu['staat'] = 'Österreich';
-        $neu['fd_tel'] = $neu['fd_email'] = $neu['fd_email_status'] = $neu['fd_hp'] = "";
-        $neu['fd_geb_dat'] = $neu['fd_sterb_dat'] = $neu['fd_austr_dat'] = "0000-00-00";
-        $neu['fd_changed_id'] = $_SESSION['BS_Prim']['BE']['be_id'];
-        $neu['fd_changed_at'] = date('Y-m-d H:m:s');
-        $neu['be_id'] = 0;
-        $neu['be_mi_id'] = 0;
+    if ($fi_id == 0) {
+        $neu['fi_id'] = $fi_id;
+        $neu['fi_abk'] = $neu['fi_name'] = $neu['fi_ort'] = $neu['fi_vorgaenger'] = "";
+        $neu['fi_funkt'] = $neu['fi_inet'] = "";
+        $neu['fi_changed_id_s'] = "";
+        $neu['fi_changed_id'] = $_SESSION['BS_Prim']['BE']['be_id'];
+        $neu['fi_chanded_at'] = date('Y-m-d H:m:s');
     } else {
 
-        $neu = $DBD->getUserDataById($fd_id);
-        
-        $neu['staat_id'] = ''; 
-        $neu['staat'] = ""; //Auslesen!
-        
+        $neu = $DBD->getFirmenById($fi_id);
+  
         #var_dump($neu);
         
         if ($debug) {
@@ -129,10 +121,10 @@ if ($phase == 1) {
 
 switch ($phase) {
     case 0:
-        require 'VS_BenEdit_ph0_inc.php';
+        require 'VS_FirmenEdit_ph0_inc.php';
         break;
     case 1:
-        require "VS_BenEdit_ph1_inc.php";
+        require "VS_FirmenEdit_ph1_inc.php";
         break;
 }
 HTML_trailer();
