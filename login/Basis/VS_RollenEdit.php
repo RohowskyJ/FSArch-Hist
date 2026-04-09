@@ -31,6 +31,7 @@ AppAutoloader::register(); // Für Klassen, die Composer nicht laden kann
 
 require PathHelper::fs('Basis/BS_Funcs_lib.php');
 require PathHelper::fs('Basis/FS_CommFuncs_lib.php');
+require PathHelper::fs('Basis/FS_ConstLib.php');
 #require $path2ROOT . 'login/Basis/BS_Funcs_lib.php';
 #require $path2ROOT . 'login/Basis/FS_CommFuncs_lib.php';
 
@@ -44,7 +45,7 @@ $path2ROOT = "../../";
 $debug = False; // Debug output Ein/Aus Schalter
 
 require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
-require $path2ROOT . 'login/common/VF_Const.lib.php';
+# require $path2ROOT . 'login/common/VF_Const.lib.php';
 
 $TABUcss = true;
 $header = "";

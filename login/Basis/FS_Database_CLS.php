@@ -48,6 +48,7 @@ class FS_Database
         'falinks', // Links zu öffentl. Archiven und bibliotheken
         'firmen',  // Firmen
         'unterst', // Unterdtützer
+        'abk',     // Abkürzungen
     ];
     
     /** Erlaubte Rechtewerte für Mandant */
@@ -1222,6 +1223,40 @@ class FS_Database
     public function getUnterstById(int $id): ?array
     {
         return $this->selectOne('unterst', ['fi_id' => $id]);
+    }
+    
+    //  --- Abkürzungen- Verwaltung  ---
+    
+    /**
+     * Abkürzung  Eintrag anlegen
+     * @param array $data ['be_ids'=>int, 'em_mail_grp'=>string, 'em_active'=>string, 'em_new_uid'=>int, 'em_changed_uid'=>string]
+     * @return int Insert ID
+     */
+    public function createAbkuerz(array $data): int
+    {
+        return $this->insert('abk', $data);
+    }
+    
+    /**
+     * Abkürzung   Eintrag aktualisieren
+     * @param int $emId
+     * @param array $data
+     * @return int affected rows
+     */
+    public function updateAbkuerz(int $abId, array $data): int
+    {
+        return $this->update('abk', $data, ['ab_id' => $abId]);
+    }
+    
+    /**
+     * Abkürzung  Eintrag nach ID holen
+     * @param int $emId
+     * @return array|null
+     */
+    
+    public function getAbkuerzById(int $id): ?array
+    {
+        return $this->selectOne('abk', ['ab_id' => $id]);
     }
     
     /**

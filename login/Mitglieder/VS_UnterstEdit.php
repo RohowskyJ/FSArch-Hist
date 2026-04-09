@@ -46,11 +46,12 @@ $debug = False; // Debug output Ein/Aus Schalter
 
 require PathHelper::fs('Basis/BS_Funcs_lib.php');
 require PathHelper::fs('Basis/FS_CommFuncs_lib.php');
+require PathHelper::fs('Basis/FS_ConstLib.php');
 #require $path2ROOT . 'login/Basis/BS_Funcs_lib.php';
 #require $path2ROOT . 'login/Basis/FS_CommFuncs_lib.php';
 
 require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
-require $path2ROOT . 'login/common/VF_Const.lib.php';
+# require $path2ROOT . 'login/common/VF_Const.lib.php';
 
 $TABUcss = true;
 $header = "";
@@ -117,16 +118,10 @@ if ($phase == 0) {
         $neu['fu_changed_at'] = date('Y-m-d H:m:s');
     } else {
 
-        $neu = $mitgl->getUnterstById($fu_id);f
+        $neu = $mitgl->getUnterstById($fu_id);
         
-        var_dump($neu);
-        
-        if ($debug) {
-            echo '<pre class=debug>';
-            echo '<hr>$neu: ';
-            var_dump($neu);
-            echo '</pre>';
-        }
+        #var_dump($neu);
+  
     }
 }
 

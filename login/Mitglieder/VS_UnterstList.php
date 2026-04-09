@@ -59,12 +59,12 @@ fsarch_bootstrap_path_init('/'.$cal_arr[1]);
 
 require PathHelper::fs('Basis/BS_Funcs_lib.php');
 require PathHelper::fs('Basis/FS_CommFuncs_lib.php');
-    
+require PathHelper::fs('Basis/FS_ConstLib.php');
 # require $path2ROOT . 'login/Basis/BS_Funcs_lib.php';
 # require $path2ROOT . 'login/Basis/FS_CommFuncs_lib.php';
 
 require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
-require $path2ROOT . 'login/common/VF_Const.lib.php';
+# require $path2ROOT . 'login/common/VF_Const.lib.php';
 
 use FSArch\Login\Basis\FS_Database;
 

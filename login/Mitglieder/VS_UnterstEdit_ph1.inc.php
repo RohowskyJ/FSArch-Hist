@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Mitgliederverwaltung, Date abspeichern
+ * Unterstützerverwaltung, Date abspeichern
  *
  * @author Josef Rohowsky - neu 2020
  *
@@ -53,6 +53,7 @@ if ($neu['fu_id'] == 0) { // Neu anlegen eines Mitglieds- Datensatzes
 }
 
 header ("Location: VF_UnterstList.php");
+
 if ($debug) {
     echo "<pre class=debug>VS_UnterstEdit_ph1.inc.php beendet</pre>";
 }
