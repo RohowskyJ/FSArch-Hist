@@ -223,7 +223,7 @@
         try {
             console.log('CancelClick: Sende AJAX Request', { mi_id, field, year, action: 'cancel' });
 
-            const response = await fetch('common/API/MIB_Payment_API.php', {
+            const response = await fetch('API/MIB_Payment_API.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

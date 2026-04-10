@@ -3,7 +3,7 @@ function initBenutzerAutocomplete(selector) {
     $(selector).autocomplete({
         source: function(request, response) {
             $.ajax({
-                url: '../common/API/FS_BenutzerAutoComp_API.php',
+                url: '../Basis/API/FS_BenutzerAutoComp_API.php',
                 dataType: 'json',
                 data: { term: request.term },
                 success: function(data) {

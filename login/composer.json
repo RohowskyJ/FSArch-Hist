@@ -1,0 +1,52 @@
+{
+	"name" : "fsarch/fsarch",
+	"description" : "Monorepo für PHP-Projekt mit mehreren Modulen",
+	"type" : "project",
+	"require" : {
+		"php" : ">=8.3",
+		"ext-pdo" : "*",
+		"phpmailer/phpmailer" : "^7.0"
+	},
+	"require-dev" : {
+		"phpunit/phpunit" : "^10"
+	},
+	"autoload" : {
+		"psr-4" : {
+			"FSArch\\Login\\Basis\\" : "Basis/",
+			"FSArch\\Login\\Mitglieder\\" : "Mitglieder/",
+			"FSArch\\Login\\Fotoverwaltung\\" : "Foto/",
+			"FSArch\\Login\\Oeffentlichkeitsarbeit\\" : "Oeffi/",
+			"FSArch\\Login\\Archivverwaltung\\" : "Archiv/",
+			"FSArch\\Login\\Inventarverwaltung\\" : "Inventar/",
+			"FSArch\\Login\\FzgGer\\" : "Fzg/",
+			"FSArch\\Login\\PersAusr\\" : "PSA/",
+			"FSArch\\Login\\Shared\\" : "shared/"
+		},
+		"classmap" : [
+			"Basis/common/BS_FormRendererFlex_CLS.php",
+			"Basis/common/BS_TableColumnMetadata_CLS.php",
+			"Basis/common/BS_Logger_CLS.php",
+			"Basis/common/FS_Database_CLS.php",
+			"Basis/API/AB_ListeTableConfig_CLS.php",
+			"Basis/API/AB_ListeRepository_CLS.php",
+			"Mitglieder/API/MI_Mitgliedermodule_CLS.php",
+			"Mitglieder/API/MI_MemberRepository_CLS.php",
+			"Mitglieder/API/MI_MemberTableConfig_CLS.php",
+			"Mitglieder/API/MIB_MemberRepository_CLS.php",
+			"Mitglieder/API/MIB_MemberTableConfig_CLS.php",
+			"Mitglieder/API/MIE_EhrungRepository_CLS.php",
+			"Mitglieder/API/MIE_EhrungTableConfig_CLS.php"
+		]
+	},
+	"autoload-dev" : {
+		"psr-4" : {
+			"Tests\\" : "tests/"
+		}
+	},
+	"scripts" : {
+		"post-install-cmd" : "echo 'Composer install abgeschlossen.'",
+		"post-update-cmd" : "echo 'Composer update abgeschlossen.'"
+	},
+	"minimum-stability" : "beta",
+	"prefer-stable" : true
+}

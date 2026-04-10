@@ -8,8 +8,13 @@ session_start();
 $module = 'VFH';
 $sub_module = 'IntStart';
 
-$_SESSION['BS_Prim']['Mod'] = ['module' => $module, 'smod' => $sub_module, 'caller' => $module];
-
+var_dump($_SESSION['BS_Prim']);
+if (isset($_SESSION['BS_Prim']['BE']['be_id']) && $_SESSION['BS_Prim']['BE']['be_id'] >= 1 && $_SESSION['BS_Prim']['BE']['roles'] != "") {
+    $_SESSION['BS_Prim']['Mod'] = ['module' => $module, 'smod' => $sub_module, 'caller' => $module];  
+} else {
+    header("Location: Basis/cmmon/FS_Login.php");
+}
+var_dump($_SESSION['BS_Prim']);
 /**
  * Angleichung an den Root-Path
  *
@@ -20,17 +25,27 @@ $path2ROOT = "../";
  * Includes-Liste
  * enthält alle jeweils includierten Scritpt Files
  */
-#$_SESSION[$module]['Inc_Arr']  = array();
-#$_SESSION[$module]['Inc_Arr'][] = "VF_C_Menu.php"; 
+$_SESSION[$module]['Inc_Arr']  = array();
+$_SESSION[$module]['Inc_Arr'][] = "VF_C_Menu.php"; 
 
 $debug = False; // Debug output Ein/Aus Schalter
 
 /**
- * Bootstrap: Composer-/Shared-Einstieg
+ * Bootstrap: Composer-/Shared-Einstieg mit Pfadhelder
  */
-require_once __DIR__ . '/../login/Basis/bootstrap.php';
+$rootPfad = $_SERVER['DOCUMENT_ROOT'];
+$caller = $_SERVER['REQUEST_URI'];
+$cal_arr = explode("/",$caller);
+require_once __DIR__ . '/../login/bootstrap.php';
+fsarch_bootstrap_path_init('/'.$cal_arr[1]);
 
-require $path2ROOT .  'login/Basis/BS_Funcs_lib.php';
+require PathHelper::fs('Basis/common/BS_FuncsLib.php');
+require PathHelper::fs('Basis/common/FS_CommFuncsLib.php');
+#require PathHelper::fs('Basis/common/FS_ConstLib.php');
+#require PathHelper::fs('Basis/common/FS_ConfigLib.php');
+# require $path2ROOT . 'login/Basis/BS_Funcs_lib.php';
+# require $path2ROOT . 'login/Basis/FS_CommFuncs_lib.php';
+
 
 require $path2ROOT .  'login/common/VF_Comm_Funcs.lib.php';
 
@@ -53,6 +68,7 @@ if (isset($_POST['sessionData'])) {
     $_SESSION['BS_Prim']['BE'] = $_POST['sessionData'];
     var_dump($_SESSION['BS_Prim']);
 }
+
 initial_debug('POST', 'GET'); # Wenn $debug=true - Ausgabe von Debug Informationen: $_POST, $_GET, $_FILES
 
     echo  "<div class='Menu-Header'>Programmauswahl für Mitglieder</div>";

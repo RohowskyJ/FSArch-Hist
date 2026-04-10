@@ -1,11 +1,10 @@
-<?php 
-
+<?php
 // Fehleranzeige und Logging aktivieren (nur für Debug, im Produktivbetrieb aus)
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/FI_Liste_API_php-error.log.txt');
+ini_set('error_log', __DIR__ . '/ME_ListeAPI_php-error.log.txt');
 
 // Shutdown-Funktion direkt am Anfang registrieren
 register_shutdown_function(function() {
@@ -18,35 +17,21 @@ register_shutdown_function(function() {
     }
 });
 
-/**
- * Pfad- Helfer
- *
- * @var string $rootPfad
- */
-$rootPfad = $_SERVER['DOCUMENT_ROOT'];
-$caller = $_SERVER['REQUEST_URI'];
-$cal_arr = explode("/", $caller);
-require_once __DIR__ . '/../bootstrap.php';
-fsarch_bootstrap_path_init();
-AppAutoloader::register();
-    
-// Optional: prüfen, ob Composer/Vendor-Autoloader oder AppAutoloader geladen ist
-if (!class_exists(\FSArch\Login\Basis\FS_Database::class)) {
-    error_log("Class FSArch\\Login\\Basis\\FS_Database not found after bootstrap load.");
-}
-if (!class_exists(\FSArch\Login\Basis\FI_ListeRepository::class)) {
-    require_once __DIR__ . '/FI_ListeRepository';
-}
-if (!class_exists(\FSArch\Login\Basis\FI_ListeTableConfig::class)) {
-    require_once __DIR__ . '/FI_ListeTableConfig';
-}
-use FSArch\Login\Basis\FS_Database;
-use FSArch\Login\Basis\FI_ListeRepository;
-use FSArch\Login\Basis\FI_ListeTableConfig;
-use FSArch\Login\Basis\common\BS_Logger;
-
 // Output Buffering starten, um unerwünschte Ausgabe zu kontrollieren
 ob_start();
+$rootPfad = $_SERVER['DOCUMENT_ROOT'];
+$caller = $_SERVER['REQUEST_URI'];
+$cal_arr = explode("/",$caller);
+require_once $rootPfad . '/'.$cal_arr[1].'/login/BS_BootPfadL_CLS.php';
+PathHelper::init('/'.$cal_arr[1]);  // Basis-URL anpassen
+AppAutoloader::register();
+
+// Optional: prüfen, ob PathHelper geladen ist
+if (!class_exists('PathHelper')) {
+    error_log("Class PathHelper not found after require_once!");
+} else {
+    error_log("Class PathHelper loaded successfully.");
+}
 
 try {
 
@@ -54,7 +39,7 @@ try {
     
     $vfDatabase = FS_Database::getInstance();
     $pdo = $vfDatabase->getPDO();
-    $repo = new FI_ListeRepository($pdo);
+    $repo = new ME_ListeRepository($pdo);
     
     // Debug-Ausgabe als Log, nicht als var_dump
     error_log("Repo Objekt: " . print_r($repo, true));
@@ -65,8 +50,8 @@ try {
     
     error_log("Suchparameter: " . var_export($search, true));
     
-    $data = $repo->getFirmen($listType, $search);
-    $columns = FI_ListeTableConfig::getColumns($listType, $pdo);
+    $data = $repo->getMandErl($listType, $search);
+    $columns = ME_ListeTableConfig::getColumns($listType, $pdo);
     
     error_log("Columns: " . print_r($columns, true));
     
