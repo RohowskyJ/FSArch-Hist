@@ -9,6 +9,14 @@ session_start();
 $module = 'ADM';
 $sub_adm = 'all';
 
+var_dump($_SESSION['BS_Prim']);
+if (isset($_SESSION['BS_Prim']['BE']['be_id']) && $_SESSION['BS_Prim']['BE']['be_id'] >= 1 && $_SESSION['BS_Prim']['BE']['roles'] != "") {
+   # $_SESSION['BS_Prim']['Mod'] = ['module' => $module, 'smod' => $sub_module, 'caller' => $module];
+} else {
+    header("Location: Basis/cmmon/FS_Login.php");
+}
+var_dump($_SESSION['BS_Prim']);
+
 /**
  * Angleichung an den Root-Path
  *
@@ -26,11 +34,21 @@ $_SESSION[$module]['Inc_Arr'][] = "FS_V_Zentral_Verw.php";
 $debug = False; // Debug output Ein/Aus Schalter
 
 /**
- * Bootstrap: Composer-/Shared-Einstieg
+ * Bootstrap: Composer-/Shared-Einstieg mit Pfadhelder
  */
-require_once __DIR__ . '/../login/Basis/bootstrap.php';
+$rootPfad = $_SERVER['DOCUMENT_ROOT'];
+$caller = $_SERVER['REQUEST_URI'];
+$cal_arr = explode("/",$caller);
+require_once __DIR__ . '/../login/bootstrap.php';
+fsarch_bootstrap_path_init('/'.$cal_arr[1]);
 
-require $path2ROOT . 'login/Basis/BS_Funcs_lib.php';
+require PathHelper::fs('Basis/common/BS_FuncsLib.php');
+# require PathHelper::fs('Basis/common/FS_CommFuncsLib.php');
+# require PathHelper::fs('Basis/common/FS_ConstLib.php');
+# require PathHelper::fs('Basis/common/FS_ConfigLib.php');
+# require $path2ROOT . 'login/Basis/BS_Funcs_lib.php';
+# require $path2ROOT . 'login/Basis/FS_CommFuncs_lib.php';
+
 require $path2ROOT . 'login/common/VF_Comm_Funcs.lib.php';
 
 $flow_list = False;
@@ -56,20 +74,22 @@ if (userHasRole('ADM-ALLE') || userHasRole('ADM-MA')) {  // Ist benutzer berecht
     echo "<a href='VF_Z_E_List.php' target='Eigentm'>Eigentümerverwaltung </a>"; # neu OK
     echo "</div>";
 
+}
+ 
+if (userHasRole('ADM-ALLE') ) {  // Ist benutzer berechtigt?
+    
     echo "<div class='Menu-Separator'>Liste der Empfänger von administrativen E-Mails (Mitglieds- Neuanmeldung, Bezahlung, ... </div>";;
     echo "<div class='w3-row' >"; // Beginn der Einheit Ausgabe
     echo "<a href='Basis/VS_AdmEmailList.php' target='Mail_List'>Empfänger der automatischen E-Mails</a>"; # neu ok
     echo "</div>";
-}
- 
-if (userHasRole('ADM-ALLE') || userHasRole('ADM-MA')) {  // Ist benutzer berechtigt?
+    
     echo "<div class='Menu-Separator'>Benutzer- und Zugriffsverwaltung</div>";;
     echo "<div class='w3-row' >"; // Beginn der Einheit Ausgabe
     echo "Pflege der berechtigten Benutzer, Passworte und Berechtigungen.</d><br>";
     echo "<a href='Basis/VS_BenList.php' target='Benutz'>Benutzer- und Zugriffs- Verwaltung </a>"; # neu
     echo "</div>";
 }
-
+if (userHasRole('ADM-ALLE') || userHasRole('ADM-MA')) {  // Ist benutzer berechtigt?
     echo "<div class='Menu-Separator'>Firmen (Fzg/Gerät - Hersteller/Aufbauer) </div>";
     echo "<div class='w3-row' >"; // Beginn der Einheit Ausgabe
     echo "<tr><TD>Liste Fahrzeug- und Geräte- Hersteller und Aufbauer </d><br>";
@@ -79,9 +99,9 @@ if (userHasRole('ADM-ALLE') || userHasRole('ADM-MA')) {  // Ist benutzer berecht
     echo "<div class='Menu-Separator'>Abkürzungen </div>";
     echo "<div class='w3-row' >"; // Beginn der Einheit Ausgabe
     echo "<tr><TD>Abkürzungen im Fahrzeug- Gerätebereich  </d><br>";
-    echo "<a href='VF_Z_AB_List.php' target='Config'>Abkürzungen</a>"; # neu OK
+    echo "<a href='Basis/VS_AbkuerzList.php' target='Config'>Abkürzungen</a>"; # neu OK
     echo "</div>";
-    
+}
 if (userHasRole('ADM-ALLE')) {  // Ist benutzer berechtigt?
     echo "<div class='Menu-Separator'>Konfiguration der Seite </div>";
     echo "<div class='w3-row' >"; // Beginn der Einheit Ausgabe
@@ -89,31 +109,29 @@ if (userHasRole('ADM-ALLE')) {  // Ist benutzer berechtigt?
 
     echo "<a href='common/Proj_Conf_Edit.php' target='Config'>Konfigurations- Parameter der URL</a>"; # neu OK
     echo "</div>";
+    
+    echo "<div class='Menu-Separator'>Prozesse, die zu Analysen und Korrekturen dienen, aber unter Umständen vorher geändert/angepasst werden müssen.</div>";
+    echo "<div class='w3-row' >"; // Beginn der Einheit Ausgabe
+    echo "Pflege verschiedener Daten </br>";
+    echo "<a href='VF_Z_Suchb_Gen.php' target='suchbegr'>Suchbegriffe (Findbücher) regenerieren </a><br>";
+    echo "<a href='VF_Z_Pict_Valid.php' target='Bilder Prüfg'>Bilder- Prüfung (Tabellen - Dirs / vorhanden - nicht vorhanden)</a><br>";
+    
+    echo "<a href='VF_Z_AR_Renum_AN.php?ei_id=1' target='ArchNr-Renum'>Archiv- Nummern Renum Eig=1 (Verein)</a><br>";
+    echo "<a href='VF_Z_AR_Renum_AN.php?ei_id=21' target='ArchNr-Renum'>Archiv- Nummern Renum Eig=21 (FF WrNdf)</a><br>";
+    echo "</div>";
+    echo "<div>";
+    echo "<div class='Menu-Separator'>Daten von CSV-Datei in Tabellen einlesen:</div>";;
+    echo "Dateiformat:<br>";
+    echo "1. Zeile: Tabellen- Name, z.B.: Test_tab<br>";
+    echo "2. Zeile: fld_nam1|fld-nam2| ....<br>";
+    echo "ab der 3. Zeile: Inhalte, z.B.: inh1|inh2| ....<br>";
+    echo "<a href='VF_Z_DS_2_Table.php' target='Flat-File Imp'>FlatFile Import in eine Tabelle</a><br>";
+    echo "</div>";
+    
+    echo "<div class='Menu-Separator'>Datenbank- Tabellen Exportieren und Importieren:</div>";
+    echo "<a href='VF_Z_DB_backup.php' target='DB_BU'>Datenbank Sichern und wieder Herstellen</a><br>";
+    echo "</div>";
 
-    
-        echo "<div class='Menu-Separator'>Prozesse, die zu Analysen und Korrekturen dienen, aber unter Umständen vorher geändert/angepasst werden müssen.</div>";
-        echo "<div class='w3-row' >"; // Beginn der Einheit Ausgabe
-        echo "Pflege verschiedener Daten </br>";
-        echo "<a href='VF_Z_Suchb_Gen.php' target='suchbegr'>Suchbegriffe (Findbücher) regenerieren </a><br>";
-        echo "<a href='VF_Z_Pict_Valid.php' target='Bilder Prüfg'>Bilder- Prüfung (Tabellen - Dirs / vorhanden - nicht vorhanden)</a><br>";
-        
-        echo "<a href='VF_Z_AR_Renum_AN.php?ei_id=1' target='ArchNr-Renum'>Archiv- Nummern Renum Eig=1 (Verein)</a><br>";
-        echo "<a href='VF_Z_AR_Renum_AN.php?ei_id=21' target='ArchNr-Renum'>Archiv- Nummern Renum Eig=21 (FF WrNdf)</a><br>";
-        echo "</div>";
-        echo "<div>";
-        echo "<div class='Menu-Separator'>Daten von CSV-Datei in Tabellen einlesen:</div>";;
-        echo "Dateiformat:<br>";
-        echo "1. Zeile: Tabellen- Name, z.B.: Test_tab<br>";
-        echo "2. Zeile: fld_nam1|fld-nam2| ....<br>";
-        echo "ab der 3. Zeile: Inhalte, z.B.: inh1|inh2| ....<br>";
-        echo "<a href='VF_Z_DS_2_Table.php' target='Flat-File Imp'>FlatFile Import in eine Tabelle</a><br>";
-        echo "</div>";
-        
-        echo "<div class='Menu-Separator'>Datenbank- Tabellen Exportieren und Importieren:</div>";
-        echo "<a href='VF_Z_DB_backup.php' target='DB_BU'>Datenbank Sichern und wieder Herstellen</a><br>";
-        echo "</div>";
-    
-    
     echo "<div class='Menu-Separator'>Sitzungs- Protokolle'</div>";
     echo "<div class='w3-row' >"; // Beginn der Einheit Ausgabe
     echo "Protokolle, .... .<br>";

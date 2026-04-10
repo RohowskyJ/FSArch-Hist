@@ -5,7 +5,7 @@ namespace FSArch\Login\Basis;
 
 $moduleId = 'ADM-DB';
 
-require_once 'FS_Config_lib.php';
+require_once __DIR__ . '/FS_ConfigLib.php';
 
 /**
  * FS_Database
@@ -1159,7 +1159,7 @@ class FS_Database
      * @param array $data
      * @return int affected rows
      */
-    public function updateFirmen(int $efiId, array $data): int
+    public function updateFirmen(int $fiId, array $data): int
     {
         return $this->update('firmen', $data, ['fi_id' => $fiId]);
     }

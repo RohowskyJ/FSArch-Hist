@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
-require_once '../FS_Config_lib.php';  // Ihre Konfigurationsdatei
-require_once '../FS_Database_CLS.php';    // Ihre VF_Database-Klasse
+require_once '../common/FS_ConfigLib.php';  // Ihre Konfigurationsdatei
+# require_once '../FS_Database_CLS.php';    // Ihre VF_Database-Klasse
 
-# $db = new VF_Database();
+use FSArch\Login\Basis\FS_Database;
+use FSArch\Login\Basis\common\BS_Logger;
 
 header('Content-Type: application/json; charset=utf-8');
 
